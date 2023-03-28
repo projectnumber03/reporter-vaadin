@@ -1,11 +1,11 @@
 package ru.plorum.reporter.view;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -28,8 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static ru.plorum.reporter.util.Constants.DELETE;
+import static ru.plorum.reporter.util.Constants.USERS;
 
-@PageTitle("Пользователи")
+@PageTitle(USERS)
 @FieldDefaults(level = AccessLevel.PROTECTED)
 @Route(value = "users", layout = MainView.class)
 public class UsersView extends AbstractView {
@@ -47,8 +48,9 @@ public class UsersView extends AbstractView {
     @Override
     @PostConstruct
     protected void initialize() {
-        horizontal.add(createNewButton());
-        vertical.add(createFilters());
+        final var layout = new VerticalLayout(new H4(USERS), createNewButton());
+        layout.setPadding(false);
+        horizontal.add(layout);
         vertical.add(userTable);
         add(vertical);
     }
@@ -57,24 +59,14 @@ public class UsersView extends AbstractView {
         return new NewButton("Новый пользователь", "users/upsert");
     }
 
-    private Accordion createFilters() {
-        final VerticalLayout layout = new VerticalLayout();
-        layout.setSpacing(false);
-        layout.setPadding(false);
-        final Accordion accordion = new Accordion();
-        accordion.close();
-        accordion.add("Фильтры", layout);
-        return accordion;
-    }
-
     private PaginatedGrid<User> createUserTable() {
         final Grid<User> grid = new Grid<>();
         grid.addColumn(createEditButtonRenderer()).setHeader("Пользователь");
         grid.addColumn(User::getName).setHeader("ФИО");
         grid.addColumn(User::getEmail).setHeader("Email");
         grid.addColumn(user -> DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(user.getCreatedOn())).setHeader("Создан");
-        grid.addColumn(createActionRenderer()).setTextAlign(ColumnTextAlign.CENTER);
-        final PaginatedGrid<User> paginatedGrid = new PaginatedGrid<>(grid);
+        grid.addColumn(createActionRenderer()).setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
+        final var paginatedGrid = new PaginatedGrid<>(grid);
         paginatedGrid.setItems(userRepository.findAll());
         return paginatedGrid;
     }
@@ -119,13 +111,13 @@ public class UsersView extends AbstractView {
     }
 
     private Button createBlockButton(final User user) {
-        final String message = String.format("Хотите заблокировать пользователя \"%s\"?", user.getName());
+        final var message = String.format("Хотите заблокировать пользователя \"%s\"?", user.getName());
         final Runnable callback = () -> {
             user.setActive(false);
             userRepository.save(user);
             userTable.setItems(userRepository.findAll());
         };
-        final Button button = new Button();
+        final var button = new Button();
         button.setIcon(VaadinIcon.LOCK.create());
         button.setText("Заблокировать");
         button.addClickListener(e -> new ConfirmationDialog(message, callback).open());
@@ -133,13 +125,13 @@ public class UsersView extends AbstractView {
     }
 
     private Button createUnblockButton(final User user) {
-        final String message = String.format("Хотите разблокировать пользователя \"%s\"?", user.getName());
+        final var message = String.format("Хотите разблокировать пользователя \"%s\"?", user.getName());
         final Runnable callback = () -> {
             user.setActive(true);
             userRepository.save(user);
             userTable.setItems(userRepository.findAll());
         };
-        final Button button = new Button();
+        final var button = new Button();
         button.setIcon(VaadinIcon.UNLOCK.create());
         button.setText("Разблокировать");
         button.addClickListener(e -> new ConfirmationDialog(message, callback).open());

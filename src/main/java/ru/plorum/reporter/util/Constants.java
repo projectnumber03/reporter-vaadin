@@ -6,6 +6,11 @@ public class Constants {
 
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
+    public static final String NA = "н/д";
+
+    public static final String USERS = "Пользователи";
+    public static final String CONNECTIONS = "Подключения";
+    public static final String CONNECTION = "Подключение";
     public static final String TOPIC = "Тема";
     public static final String STATUS = "Статус";
     public static final String PRIORITY = "Приоритет";

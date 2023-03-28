@@ -16,7 +16,7 @@ public class IndexView extends AbstractView {
     @Override
     @PostConstruct
     protected void initialize() {
-        final TextareaHighlighter textareaHighlighter = new TextareaHighlighter();
+        final var textareaHighlighter = new TextareaHighlighter();
         textareaHighlighter.addClickListener(e -> {
             textArea.setVisible(true);
             textareaHighlighter.setVisible(false);

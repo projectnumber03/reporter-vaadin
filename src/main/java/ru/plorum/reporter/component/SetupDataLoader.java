@@ -25,29 +25,35 @@ public class SetupDataLoader {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     @Value("${administrator.login}")
-    private String username;
+    private String login;
+
+    @Value("${administrator.password}")
+    private String password;
 
     @PostConstruct
     protected void initialize() {
         if (!CollectionUtils.isEmpty(privilegeRepository.findAll())) return;
         final Map<String, String> privilegesMap = new HashMap<>() {{
-            put("OWN_ISSUE_CREATE_PRIVILEGE", "Создание собственных заявок");
-            put("OWN_ISSUE_EDIT_PRIVILEGE", "Редактирование собственных заявок");
-            put("ISSUE_CREATE_PRIVILEGE", "Создание заявок");
-            put("ISSUE_EDIT_PRIVILEGE", "Редактирование заявок");
+            put("OWN_REPORT_CREATE_PRIVILEGE", "Создание собственных отчетов");
+            put("OWN_REPORT_EDIT_PRIVILEGE", "Редактирование собственных отчетов");
+            put("REPORT_CREATE_PRIVILEGE", "Создание отчетов");
+            put("REPORT_EDIT_PRIVILEGE", "Редактирование отчетов");
         }};
         final Set<Privilege> adminPrivileges = privilegesMap.entrySet().stream()
                 .map(this::createPrivilegeIfNotFound)
-                .filter(p -> Arrays.asList("ISSUE_CREATE_PRIVILEGE", "ISSUE_EDIT_PRIVILEGE").contains(p.getName()))
+                .filter(p -> Arrays.asList("REPORT_CREATE_PRIVILEGE", "REPORT_EDIT_PRIVILEGE").contains(p.getName()))
                 .collect(Collectors.toSet());
         createAdminIfNotFound(adminPrivileges);
     }
 
     @Transactional
     protected void createAdminIfNotFound(final Set<Privilege> privileges) {
-        final List<User> users = userRepository.findByNameLike(username);
+        final List<User> users = userRepository.findByLoginLike(login);
         final User user = CollectionUtils.isEmpty(users) ? new User() : users.iterator().next();
         user.setId(UUID.randomUUID());
+        user.setLogin(login);
+        user.setName(login);
+        user.setPassword(password);
         user.setRoles(Collections.singleton(createAdminRoleIfNotFound(privileges)));
         user.setCreatedOn(LocalDateTime.now());
         user.setActive(true);

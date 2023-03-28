@@ -19,21 +19,24 @@ import lombok.Getter;
 
 import java.util.Optional;
 
+import static ru.plorum.reporter.util.Constants.CONNECTIONS;
+import static ru.plorum.reporter.util.Constants.USERS;
+
 public class MainView extends AppLayout {
 
     @Getter
     private final H3 viewTitle = new H3();
 
     public MainView() {
-        final DrawerToggle toggle = new DrawerToggle();
-        final H1 title = new H1("Reporter");
+        final var toggle = new DrawerToggle();
+        final var title = new H1("Reporter");
         title.getStyle().set("font-size", "var(--lumo-font-size-l)").set("margin", "0");
-        final H6 mainMenuHeader = new H6("Главное меню");
+        final var mainMenuHeader = new H6("Главное меню");
         mainMenuHeader.getStyle().set("padding", "10px 25px 10px 15px");
         addToDrawer(mainMenuHeader);
         addToDrawer(getTabs());
         addToDrawer(createAdminMenu());
-        final H6 reporterMenuHeader = new H6("Отчетность");
+        final var reporterMenuHeader = new H6("Отчетность");
         reporterMenuHeader.getStyle().set("padding", "10px 25px 10px 15px");
         addToDrawer(reporterMenuHeader);
         addToDrawer(createReportMenu());
@@ -41,7 +44,7 @@ public class MainView extends AppLayout {
     }
 
     private Tabs getTabs() {
-        final Tabs tabs = new Tabs();
+        final var tabs = new Tabs();
         tabs.add(
                 createTab(VaadinIcon.USER, "Профиль", null)
         );
@@ -50,17 +53,17 @@ public class MainView extends AppLayout {
     }
 
     private Component createAdminMenu() {
-        final Tabs tabs = new Tabs();
+        final var tabs = new Tabs();
         tabs.add(
-                createTab(VaadinIcon.USER, "Пользователи", UsersView.class),
+                createTab(VaadinIcon.USER, USERS, UsersView.class),
                 createTab(VaadinIcon.USERS, "Группы", null),
-                createTab(VaadinIcon.UNLINK, "Подключения", null),
+                createTab(VaadinIcon.UNLINK, CONNECTIONS, ConnectionsView.class),
                 createTab(VaadinIcon.CUBES, "Модули", null),
                 createTab(VaadinIcon.TABLE, "Таблицы системы", null),
                 createTab(VaadinIcon.WRENCH, "Настройки системы", null)
         );
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
-        final VerticalLayout content = new VerticalLayout(tabs);
+        final var content = new VerticalLayout(tabs);
         content.setSpacing(false);
         content.setPadding(false);
 
@@ -71,7 +74,7 @@ public class MainView extends AppLayout {
     }
 
     private Component createReportMenu() {
-        final Tabs tabs = new Tabs();
+        final var tabs = new Tabs();
         tabs.add(
                 createTab(VaadinIcon.PLUS_SQUARE_O, "Создать отчёт", null),
                 createTab(VaadinIcon.FILE_TEXT_O, "Мои отчёты", null),
@@ -83,12 +86,12 @@ public class MainView extends AppLayout {
     }
 
     private Tab createTab(final VaadinIcon viewIcon, final String viewName, final Class<? extends Component> navigationTarget) {
-        final Icon icon = viewIcon.create();
+        final var icon = viewIcon.create();
         icon.getStyle().set("box-sizing", "border-box")
                 .set("margin-inline-end", "var(--lumo-space-m)")
                 .set("margin-inline-start", "var(--lumo-space-xs)")
                 .set("padding", "var(--lumo-space-xs)");
-        final RouterLink link = new RouterLink();
+        final var link = new RouterLink();
         link.add(icon, new Span(viewName));
         link.setTabIndex(-1);
         Optional.ofNullable(navigationTarget).ifPresent(link::setRoute);

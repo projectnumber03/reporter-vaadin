@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("select u from User as u join fetch u.roles where u.id = :id")
     Optional<User> findById(@Param("id") final UUID id);
 
-    List<User> findByNameLike(final String username);
+    List<User> findByLoginLike(final String login);
     @Query("select u from User as u join fetch u.roles as r join fetch r.privileges where u.email = :email")
     User findByEmail(@Param("email") final String email);
     List<User> findByActiveTrue();

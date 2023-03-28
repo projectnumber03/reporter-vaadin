@@ -8,7 +8,6 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H6;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -76,7 +75,7 @@ public class MainView extends AppLayout {
     private Component createReportMenu() {
         final var tabs = new Tabs();
         tabs.add(
-                createTab(VaadinIcon.PLUS_SQUARE_O, "Создать отчёт", null),
+                createTab(VaadinIcon.PLUS_SQUARE_O, "Создать отчёт", ReportUpsertView.class),
                 createTab(VaadinIcon.FILE_TEXT_O, "Мои отчёты", null),
                 createTab(VaadinIcon.COPY_O, "Все отчёты", null),
                 createTab(VaadinIcon.COPY_O, "Группы отчётов", null)

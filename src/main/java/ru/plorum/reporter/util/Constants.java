@@ -11,6 +11,7 @@ public class Constants {
     public static final String USERS = "Пользователи";
     public static final String CONNECTIONS = "Подключения";
     public static final String CONNECTION = "Подключение";
+    public static final String REPORT = "Отчёт";
     public static final String TOPIC = "Тема";
     public static final String STATUS = "Статус";
     public static final String PRIORITY = "Приоритет";

@@ -8,10 +8,7 @@ import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.repository.UserRepository;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -23,6 +20,33 @@ public class UserService {
     public List<User> getAllActive() {
         if (isManager()) return userRepository.findByActiveTrue();
         return Collections.singletonList(getAuthenticatedUser());
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public List<User> findAllWithRoles() {
+        return userRepository.findAllWithRoles();
+    }
+
+    public Optional<User> findById(final UUID id) {
+        if (Objects.isNull(id)) return Optional.empty();
+        return userRepository.findById(id);
+    }
+
+    public List<User> findByLogin(final String login) {
+        return userRepository.findByLoginLike(login);
+    }
+
+    public void delete(final User user) {
+        if (Objects.isNull(user)) return;
+        userRepository.delete(user);
+    }
+
+    public void save(final User user) {
+        if (Objects.isNull(user)) return;
+        userRepository.save(user);
     }
 
     public User getAuthenticatedUser() {

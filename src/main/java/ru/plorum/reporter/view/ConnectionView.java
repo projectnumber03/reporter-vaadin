@@ -15,8 +15,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.PostConstruct;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import ru.plorum.reporter.component.ConfirmationDialog;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
@@ -31,15 +29,14 @@ import java.util.Optional;
 import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(CONNECTIONS)
-@FieldDefaults(level = AccessLevel.PROTECTED)
 @Route(value = "connections", layout = MainView.class)
-public class ConnectionsView extends AbstractView {
+public class ConnectionView extends AbstractView {
 
-    final PaginatedGrid<Connection> connectionTable;
+    private final PaginatedGrid<Connection> connectionTable;
 
-    final ConnectionService connectionService;
+    private final ConnectionService connectionService;
 
-    public ConnectionsView(final ConnectionService connectionService) {
+    public ConnectionView(final ConnectionService connectionService) {
         this.connectionService = connectionService;
         this.connectionTable = createConnectionTable();
     }

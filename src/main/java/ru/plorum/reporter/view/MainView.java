@@ -18,8 +18,7 @@ import lombok.Getter;
 
 import java.util.Optional;
 
-import static ru.plorum.reporter.util.Constants.CONNECTIONS;
-import static ru.plorum.reporter.util.Constants.USERS;
+import static ru.plorum.reporter.util.Constants.*;
 
 public class MainView extends AppLayout {
 
@@ -54,9 +53,9 @@ public class MainView extends AppLayout {
     private Component createAdminMenu() {
         final var tabs = new Tabs();
         tabs.add(
-                createTab(VaadinIcon.USER, USERS, UsersView.class),
-                createTab(VaadinIcon.USERS, "Группы", null),
-                createTab(VaadinIcon.UNLINK, CONNECTIONS, ConnectionsView.class),
+                createTab(VaadinIcon.USER, USERS, UserView.class),
+                createTab(VaadinIcon.USERS, USER_GROUPS, UserGroupView.class),
+                createTab(VaadinIcon.UNLINK, CONNECTIONS, ConnectionView.class),
                 createTab(VaadinIcon.CUBES, "Модули", null),
                 createTab(VaadinIcon.TABLE, "Таблицы системы", null),
                 createTab(VaadinIcon.WRENCH, "Настройки системы", null)

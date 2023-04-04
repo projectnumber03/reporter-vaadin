@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -17,15 +18,18 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.ConfirmationDialog;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
+import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.model.User;
-import ru.plorum.reporter.repository.UserRepository;
+import ru.plorum.reporter.service.UserService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ru.plorum.reporter.util.Constants.DELETE;
 import static ru.plorum.reporter.util.Constants.USERS;
@@ -33,15 +37,15 @@ import static ru.plorum.reporter.util.Constants.USERS;
 @PageTitle(USERS)
 @FieldDefaults(level = AccessLevel.PROTECTED)
 @Route(value = "users", layout = MainView.class)
-public class UsersView extends AbstractView {
+public class UserView extends AbstractView {
 
-    final UserRepository userRepository;
+    final UserService userService;
     final PaginatedGrid<User> userTable;
 
-    public UsersView(
-            final UserRepository userRepository
+    public UserView(
+            final UserService userService
     ) {
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.userTable = createUserTable();
     }
 
@@ -64,10 +68,27 @@ public class UsersView extends AbstractView {
         grid.addColumn(createEditButtonRenderer()).setHeader("Пользователь");
         grid.addColumn(User::getName).setHeader("ФИО");
         grid.addColumn(User::getEmail).setHeader("Email");
+        grid.addColumn(User::getLogin).setHeader("Логин");
+        grid.addColumn(u -> u.getRoles().stream().map(Role::getName).collect(Collectors.joining(", "))).setHeader("Роли");
         grid.addColumn(user -> DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(user.getCreatedOn())).setHeader("Создан");
+        grid.addColumn(new ComponentRenderer<>(u -> {
+            if (CollectionUtils.isEmpty(u.getRoles())) {
+                final Span pending = new Span("Новый");
+                pending.getElement().getThemeList().add("badge");
+                return pending;
+            }
+            if (u.isActive()) {
+                final Span pending = new Span("Активен");
+                pending.getElement().getThemeList().add("badge success");
+                return pending;
+            }
+            final Span pending = new Span("Заблокирован");
+            pending.getElement().getThemeList().add("badge error");
+            return pending;
+        })).setHeader("Статус");
         grid.addColumn(createActionRenderer()).setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
         final var paginatedGrid = new PaginatedGrid<>(grid);
-        paginatedGrid.setItems(userRepository.findAll());
+        paginatedGrid.setItems(userService.findAllWithRoles());
         return paginatedGrid;
     }
 
@@ -97,8 +118,8 @@ public class UsersView extends AbstractView {
             }
             final String message = String.format("Хотите удалить пользователя \"%s\"?", user.getName());
             final Runnable callback = () -> {
-                userRepository.delete(user);
-                userTable.setItems(userRepository.findAll());
+                userService.delete(user);
+                userTable.setItems(userService.findAll());
             };
             final Button button = new Button();
             button.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
@@ -114,8 +135,8 @@ public class UsersView extends AbstractView {
         final var message = String.format("Хотите заблокировать пользователя \"%s\"?", user.getName());
         final Runnable callback = () -> {
             user.setActive(false);
-            userRepository.save(user);
-            userTable.setItems(userRepository.findAll());
+            userService.save(user);
+            userTable.setItems(userService.findAll());
         };
         final var button = new Button();
         button.setIcon(VaadinIcon.LOCK.create());
@@ -128,8 +149,8 @@ public class UsersView extends AbstractView {
         final var message = String.format("Хотите разблокировать пользователя \"%s\"?", user.getName());
         final Runnable callback = () -> {
             user.setActive(true);
-            userRepository.save(user);
-            userTable.setItems(userRepository.findAll());
+            userService.save(user);
+            userTable.setItems(userService.findAll());
         };
         final var button = new Button();
         button.setIcon(VaadinIcon.UNLOCK.create());

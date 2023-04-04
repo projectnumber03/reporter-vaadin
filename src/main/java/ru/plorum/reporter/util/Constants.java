@@ -9,6 +9,9 @@ public class Constants {
     public static final String NA = "н/д";
 
     public static final String USERS = "Пользователи";
+    public static final String USER = "Пользователь";
+    public static final String USER_GROUPS = "Группы";
+    public static final String USER_GROUP = "Группа";
     public static final String CONNECTIONS = "Подключения";
     public static final String CONNECTION = "Подключение";
     public static final String REPORT = "Отчёт";

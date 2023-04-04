@@ -52,4 +52,8 @@ public final class User {
     @Column(name = "EMAIL")
     String email;
 
+    public User(@NonNull final UUID id) {
+        this.id = id;
+    }
+
 }

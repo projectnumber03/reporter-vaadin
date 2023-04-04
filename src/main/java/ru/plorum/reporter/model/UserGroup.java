@@ -26,17 +26,21 @@ public final class UserGroup {
     UUID id;
 
     @Column(name = "NAME_GROUP", nullable = false, length = 100)
-    String nameGroup;
+    String name;
 
     @Column(name = "DESCRIPTION")
     String description;
 
     @ManyToOne
-    @JoinColumn(name="PARENT_GROUP_ID")
+    @JoinColumn(name = "PARENT_GROUP_ID")
     UserGroup parentUserGroup;
 
-    @OneToMany (mappedBy = "parentUserGroup")
+    @OneToMany(mappedBy = "parentUserGroup")
     @LazyCollection(LazyCollectionOption.FALSE)
     Collection<UserGroup> childUserGroups = new HashSet<>();
+
+    public UserGroup(@NonNull final UUID id) {
+        this.id = id;
+    }
 
 }

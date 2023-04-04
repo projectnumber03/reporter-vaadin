@@ -34,29 +34,29 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
         put("H2", new H2Connection());
     }};
 
-    final ConnectionService connectionService;
+    private final ConnectionService connectionService;
 
-    final UserService userService;
+    private final UserService userService;
 
-    final ComboBox<String> typeField = new ComboBox<>("Тип БД", Arrays.asList("MSSQL", "ORACLE", "MYSQL", "POSTGRESQL", "H2"));
+    private final ComboBox<String> typeField = new ComboBox<>("Тип БД", Arrays.asList("MSSQL", "ORACLE", "MYSQL", "POSTGRESQL", "H2"));
 
-    final TextArea descriptionField = new TextArea("Описание");
+    private final TextArea descriptionField = new TextArea("Описание");
 
-    final TextField hostField = new TextField("IP адрес (host) БД");
+    private final TextField hostField = new TextField("IP адрес (host) БД");
 
-    final TextField portField = new TextField("Порт БД");
+    private final TextField portField = new TextField("Порт БД");
 
-    final TextField nameField = new TextField("Название БД");
+    private final TextField nameField = new TextField("Название БД");
 
-    final TextField loginField = new TextField("Пользователь БД");
+    private final TextField loginField = new TextField("Пользователь БД");
 
-    final PasswordField passwordField = new PasswordField("Пароль к БД");
+    private final PasswordField passwordField = new PasswordField("Пароль к БД");
 
-    final Button testButton = new Button("Тест");
+    private final Button testButton = new Button("Тест");
 
-    final Button saveButton = new Button(SAVE);
+    private final Button saveButton = new Button(SAVE);
 
-    Registration saveListener;
+    private Registration saveListener;
 
     public ConnectionUpsertView(final ConnectionService connectionService, final UserService userService) {
         this.connectionService = connectionService;
@@ -128,12 +128,12 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
 
     @Override
     public void setParameter(final BeforeEvent beforeEvent, @OptionalParameter final String s) {
-        final Location location = beforeEvent.getLocation();
-        final QueryParameters queryParameters = location.getQueryParameters();
-        final Map<String, List<String>> parametersMap = queryParameters.getParameters();
-        final List<String> id = parametersMap.getOrDefault("id", Collections.emptyList());
+        final var location = beforeEvent.getLocation();
+        final var queryParameters = location.getQueryParameters();
+        final var parametersMap = queryParameters.getParameters();
+        final var id = parametersMap.getOrDefault("id", Collections.emptyList());
         if (CollectionUtils.isEmpty(id)) return;
-        final Optional<Connection> connection = connectionService.find(UUID.fromString(id.iterator().next()));
+        final var connection = connectionService.find(UUID.fromString(id.iterator().next()));
         if (connection.isEmpty()) return;
         typeField.setValue(connection.get().getType());
         descriptionField.setValue(connection.get().getDescription());

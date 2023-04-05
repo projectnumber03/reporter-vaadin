@@ -2,7 +2,6 @@ package ru.plorum.reporter.view;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
@@ -43,7 +42,7 @@ public class UserGroupUpsertView extends AbstractView implements HasUrlParameter
     @Override
     @PostConstruct
     protected void initialize() {
-        horizontal.add(new H4(USER_GROUP));
+        super.initialize();
         vertical.add(nameField);
         vertical.add(descriptionField);
         parentGroupField.setItemLabelGenerator(UserGroup::getName);

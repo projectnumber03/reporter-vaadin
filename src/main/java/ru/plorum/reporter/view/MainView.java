@@ -44,7 +44,7 @@ public class MainView extends AppLayout {
     private Tabs getTabs() {
         final var tabs = new Tabs();
         tabs.add(
-                createTab(VaadinIcon.USER, "Профиль", null)
+                createTab(VaadinIcon.USER, "Профиль", ProfileView.class)
         );
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         return tabs;
@@ -56,9 +56,9 @@ public class MainView extends AppLayout {
                 createTab(VaadinIcon.USER, USERS, UserView.class),
                 createTab(VaadinIcon.USERS, USER_GROUPS, UserGroupView.class),
                 createTab(VaadinIcon.UNLINK, CONNECTIONS, ConnectionView.class),
-                createTab(VaadinIcon.CUBES, "Модули", null),
-                createTab(VaadinIcon.TABLE, "Таблицы системы", null),
-                createTab(VaadinIcon.WRENCH, "Настройки системы", null)
+                createTab(VaadinIcon.CUBES, MODULES, ModuleView.class),
+                createTab(VaadinIcon.TABLE, SYSTEM_TABLES, SystemTableView.class),
+                createTab(VaadinIcon.WRENCH, SETTINGS, SettingsView.class)
         );
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         final var content = new VerticalLayout(tabs);
@@ -75,9 +75,9 @@ public class MainView extends AppLayout {
         final var tabs = new Tabs();
         tabs.add(
                 createTab(VaadinIcon.PLUS_SQUARE_O, "Создать отчёт", ReportUpsertView.class),
-                createTab(VaadinIcon.FILE_TEXT_O, "Мои отчёты", null),
-                createTab(VaadinIcon.COPY_O, "Все отчёты", null),
-                createTab(VaadinIcon.COPY_O, "Группы отчётов", null)
+                createTab(VaadinIcon.FILE_TEXT_O, "Мои отчёты", MyReportView.class),
+                createTab(VaadinIcon.COPY_O, "Все отчёты", AllReportView.class),
+                createTab(VaadinIcon.COPY_O, "Группы отчётов", ReportGroupView.class)
         );
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         return tabs;

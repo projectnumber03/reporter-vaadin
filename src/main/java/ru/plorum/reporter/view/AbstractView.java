@@ -1,7 +1,9 @@
 package ru.plorum.reporter.view;
 
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.PageTitle;
 
 public abstract class AbstractView extends VerticalLayout {
 
@@ -14,6 +16,8 @@ public abstract class AbstractView extends VerticalLayout {
         vertical.add(horizontal);
     }
 
-    protected abstract void initialize();
+    protected void initialize() {
+        horizontal.add(new H4(getClass().getAnnotation(PageTitle.class).value()));
+    }
 
 }

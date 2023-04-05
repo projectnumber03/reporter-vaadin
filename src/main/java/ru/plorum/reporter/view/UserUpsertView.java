@@ -4,7 +4,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
-import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -71,6 +70,7 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
     @Override
     @PostConstruct
     protected void initialize() {
+        super.initialize();
         generateLoginButton.addClickListener(e -> {
             if (StringUtils.hasText(fioField.getValue())) {
                 loginField.setValue(generateLogin(fioField.getValue()));
@@ -81,7 +81,6 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
             notification.setPosition(Notification.Position.TOP_CENTER);
         });
         generatePasswordButton.addClickListener(e -> passwordField.setValue(PasswordGenerator.generate()));
-        horizontal.add(new H4(USER));
         vertical.add(fioField);
         vertical.add(emailField);
         final var loginLayout = new HorizontalLayout(loginField, generateLoginButton);

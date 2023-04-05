@@ -2,7 +2,6 @@ package ru.plorum.reporter.view;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -66,7 +65,7 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
     @Override
     @PostConstruct
     protected void initialize() {
-        horizontal.add(new H4(CONNECTION));
+        super.initialize();
         vertical.add(typeField, descriptionField, hostField, nameField, portField, loginField, passwordField);
         final var buttonLayout = new HorizontalLayout(createTestButton(), createSaveButton());
         buttonLayout.setPadding(false);

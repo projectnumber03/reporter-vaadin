@@ -49,6 +49,10 @@ public final class Report {
     @JoinColumn(name = "CONNECTION_ID")
     Connection connection;
 
+    @ManyToOne
+    @JoinColumn(name = "GROUP_ID")
+    ReportGroup group;
+
     @Enumerated(EnumType.STRING)
     ModuleAccess.Module module;
 
@@ -113,6 +117,7 @@ public final class Report {
                 .author(this.author)
                 .name(formatNameReport(this.name))
                 .description(this.description)
+                .group(this.group)
                 .history(this.history)
                 .lastEditor(this.lastEditor)
                 .dateReport(this.dateReport)

@@ -26,8 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static ru.plorum.reporter.util.Constants.DELETE;
-import static ru.plorum.reporter.util.Constants.USER_GROUPS;
+import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(USER_GROUPS)
 @Route(value = "groups", layout = MainView.class)
@@ -60,8 +59,8 @@ public class UserGroupView extends AbstractView {
 
     private PaginatedGrid<UserGroup> createUserGroupTable() {
         final Grid<UserGroup> grid = new Grid<>();
-        grid.addColumn(createEditButtonRenderer()).setHeader("Название");
-        grid.addColumn(UserGroup::getDescription).setHeader("Описание");
+        grid.addColumn(createEditButtonRenderer()).setHeader(NAME);
+        grid.addColumn(UserGroup::getDescription).setHeader(DESCRIPTION);
         grid.addColumn(g -> Optional.ofNullable(g.getParentUserGroup()).map(UserGroup::getName).orElse(Strings.EMPTY)).setHeader("Вышестоящая группа");
         grid.addColumn(createActionRenderer()).setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
         final var paginatedGrid = new PaginatedGrid<>(grid);

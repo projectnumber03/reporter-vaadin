@@ -20,6 +20,7 @@ public class Constants {
     public static final String MY_REPORTS = "Мои отчёты";
     public static final String ALL_REPORTS = "Все отчёты";
     public static final String REPORT_GROUPS = "Группы отчётов";
+    public static final String REPORT_GROUP = "Группа отчётов";
     public static final String REPORT = "Отчёт";
     public static final String SAVE = "Сохранить";
     public static final String REQUIRED_FIELD = "Поле обязательно к заполнению";
@@ -30,5 +31,7 @@ public class Constants {
     public static final String SOURCES = "Источники";
     public static final String IMPORT_EXPORT = "Импорт/экспорт";
     public static final String SECURITY = "Безопасность";
+    public static final String NAME = "Название";
+    public static final String DESCRIPTION = "Описание";
 
 }

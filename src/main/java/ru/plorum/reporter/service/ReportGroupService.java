@@ -1,14 +1,12 @@
 package ru.plorum.reporter.service;
 
+import com.vaadin.flow.component.Component;
 import lombok.AllArgsConstructor;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import ru.plorum.reporter.model.Report;
 import ru.plorum.reporter.model.ReportGroup;
 import ru.plorum.reporter.repository.ReportGroupRepository;
 
-import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -22,10 +20,8 @@ public class ReportGroupService {
         repository.save(reportGroup);
     }
 
-    @Nullable
-    public ReportGroup findDistinctByReportsIn(final Collection<Report> reports) {
-        if (CollectionUtils.isEmpty(reports)) return null;
-        return repository.findDistinctByReportsIn(reports);
+    public void saveFromContent(final Map<String, Component> content) {
+
     }
 
 }

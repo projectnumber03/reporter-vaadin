@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ReportVisibility {
+public enum Visibility {
 
     ME(0, "Только для меня"),
     MY_GROUP(1, "Для моего отдела"),

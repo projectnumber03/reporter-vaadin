@@ -14,10 +14,8 @@ import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.Report;
 import ru.plorum.reporter.model.ReportGroup;
 import ru.plorum.reporter.model.User;
-import ru.plorum.reporter.service.ReportGroupService;
 import ru.plorum.reporter.service.ReportService;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,13 +29,10 @@ public class MyReportView extends AbstractView {
     @Getter
     private final ReportService reportService;
 
-    private final ReportGroupService reportGroupService;
-
     private final PaginatedGrid<Report> reportTable;
 
-    public MyReportView(final ReportService reportService, final ReportGroupService reportGroupService) {
+    public MyReportView(final ReportService reportService) {
         this.reportService = reportService;
-        this.reportGroupService = reportGroupService;
         this.reportTable = createReportTable();
     }
 
@@ -47,20 +42,20 @@ public class MyReportView extends AbstractView {
         super.initialize();
         setHeightFull();
         vertical.setHeightFull();
-        vertical.add(createReportTable());
+        vertical.add(reportTable);
         add(vertical);
     }
 
     private PaginatedGrid<Report> createReportTable() {
         final Grid<Report> grid = new Grid<>();
-        grid.addColumn(createEditButtonRenderer()).setHeader("Название");
+        grid.addColumn(createEditButtonRenderer()).setHeader(NAME);
         grid.addColumn(r -> Optional.ofNullable(r.getReportGroup()).map(ReportGroup::getName).orElse(NA)).setHeader("Группа отчета");
         grid.addColumn(r -> Optional.ofNullable(r.getDateReport()).map(FORMATTER::format).orElse(NA)).setHeader("Дата формирования отчета");
         grid.addColumn(r -> r.getAuthor().getName()).setHeader("Автор");
-        grid.addColumn(Report::getDescription).setHeader("Описание");
+        grid.addColumn(Report::getDescription).setHeader(DESCRIPTION);
         grid.addColumn(r -> Optional.ofNullable(r.getLastEditor()).map(User::getName).orElse(NA)).setHeader("Последний редактировавший");
         grid.addColumn(Report::getStatus).setHeader("Статус");
-        new ReportTableContextMenu(grid, reportService, reportGroupService) {
+        new ReportTableContextMenu(grid, reportService) {
 
             @Override
             public List<Report> getReports() {
@@ -90,9 +85,7 @@ public class MyReportView extends AbstractView {
     }
 
     private QueryParameters getQueryParameters(final Report report) {
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put("id", report.getId().toString());
-        return QueryParameters.simple(parameters);
+        return QueryParameters.simple(Map.of("id", report.getId().toString()));
     }
 
     protected List<Report> getReports() {

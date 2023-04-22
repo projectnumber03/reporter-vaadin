@@ -25,14 +25,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static ru.plorum.reporter.util.Constants.DESCRIPTION;
+import static ru.plorum.reporter.util.Constants.NAME;
+
 @Getter
 public class QueryTabContent extends VerticalLayout {
 
-    private final TextField name = new TextField("Название отчёта");
+    private final TextField name = new TextField(NAME);
 
-    private final TextArea description = new TextArea("Описание отчёта");
+    private final TextArea description = new TextArea(DESCRIPTION);
 
-    private final ComboBox<ReportGroup> reportGroup = new ComboBox<>("Группа отчета");
+    private final ComboBox<ReportGroup> reportGroup = new ComboBox<>("Группа");
 
     private final Grid<Query> queryGrid = new Grid<>();
 

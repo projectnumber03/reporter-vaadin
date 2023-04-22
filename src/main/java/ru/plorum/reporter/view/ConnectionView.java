@@ -22,7 +22,6 @@ import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.model.connection.Connection;
 import ru.plorum.reporter.service.ConnectionService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -94,10 +93,7 @@ public class ConnectionView extends AbstractView {
     }
 
     private QueryParameters getQueryParameters(final Connection connection) {
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put("id", connection.getId().toString());
-        parameters.put("name", connection.getDescription());
-        return QueryParameters.simple(parameters);
+        return QueryParameters.simple(Map.of("id", connection.getId().toString(), "name", connection.getDescription()));
     }
 
 }

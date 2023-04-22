@@ -3,8 +3,6 @@ package ru.plorum.reporter.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -41,13 +39,6 @@ public final class ReportGroup {
     @NonNull
     @Enumerated(EnumType.STRING)
     ModuleAccess.Module module;
-
-    @ManyToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @JoinTable(name = "REPORT_GROUP_REPORTS",
-            joinColumns = @JoinColumn(name = "REPORT_GROUP_ID"),
-            inverseJoinColumns = @JoinColumn(name = "REPORT_ID"))
-    Set<Report> reports = new LinkedHashSet<>();
 
     @ManyToMany
     @JoinTable(name = "REPORT_GROUP_USERS",

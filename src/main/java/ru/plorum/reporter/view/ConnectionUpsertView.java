@@ -18,8 +18,7 @@ import ru.plorum.reporter.service.UserService;
 
 import java.util.*;
 
-import static ru.plorum.reporter.util.Constants.CONNECTION;
-import static ru.plorum.reporter.util.Constants.SAVE;
+import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(CONNECTION)
 @Route(value = "connections/upsert", layout = MainView.class)
@@ -39,7 +38,7 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
 
     private final ComboBox<String> typeField = new ComboBox<>("Тип БД", Arrays.asList("MSSQL", "ORACLE", "MYSQL", "POSTGRESQL", "H2"));
 
-    private final TextArea descriptionField = new TextArea("Описание");
+    private final TextArea descriptionField = new TextArea(DESCRIPTION);
 
     private final TextField hostField = new TextField("IP адрес (host) БД");
 

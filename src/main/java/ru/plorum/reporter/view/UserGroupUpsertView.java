@@ -23,9 +23,9 @@ import static ru.plorum.reporter.util.Constants.*;
 @Route(value = "groups/upsert", layout = MainView.class)
 public class UserGroupUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable {
 
-    private final TextField nameField = new TextField("Название группы");
+    private final TextField nameField = new TextField(NAME);
 
-    private final TextArea descriptionField = new TextArea("Описание группы");
+    private final TextArea descriptionField = new TextArea(DESCRIPTION);
 
     private final ComboBox<UserGroup> parentGroupField = new ComboBox<>("Вышестоящая группа");
 

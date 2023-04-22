@@ -6,20 +6,16 @@ import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.QueryParameters;
 import ru.plorum.reporter.model.Report;
-import ru.plorum.reporter.model.ReportGroup;
-import ru.plorum.reporter.service.ReportGroupService;
 import ru.plorum.reporter.service.ReportService;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static ru.plorum.reporter.util.Constants.*;
 
 public abstract class ReportTableContextMenu extends GridContextMenu<Report> {
 
-    public ReportTableContextMenu(final Grid<Report> targetTable, final ReportService reportService, final ReportGroupService reportGroupService) {
+    public ReportTableContextMenu(final Grid<Report> targetTable, final ReportService reportService) {
         super(targetTable);
 
         final GridMenuItem<Report> openMenuItem = addItem("Открыть");
@@ -36,10 +32,6 @@ public abstract class ReportTableContextMenu extends GridContextMenu<Report> {
             Optional.ofNullable(reportToClone).ifPresent(r -> {
                 final Report clonedReport = r.clone();
                 reportService.save(clonedReport);
-                final ReportGroup reportGroup = reportGroupService.findDistinctByReportsIn(Collections.singletonList(r));
-                if (Objects.isNull(reportGroup)) return;
-                reportGroup.getReports().add(clonedReport);
-                reportGroupService.save(reportGroup);
                 targetTable.setItems(getReports());
             });
         }));

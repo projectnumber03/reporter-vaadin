@@ -7,16 +7,16 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import lombok.Getter;
-import ru.plorum.reporter.model.ReportVisibility;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.model.UserGroup;
+import ru.plorum.reporter.model.Visibility;
 import ru.plorum.reporter.service.UserGroupService;
 import ru.plorum.reporter.service.UserService;
 
 @Getter
 public class SecurityTabContent extends VerticalLayout {
 
-    private final RadioButtonGroup<ReportVisibility> reportVisibilityRadioButtonGroup = new RadioButtonGroup<>("Видимость отчёта");
+    private final RadioButtonGroup<Visibility> reportVisibilityRadioButtonGroup = new RadioButtonGroup<>("Видимость");
 
     private final MultiSelectComboBox<UserGroup> groupSelect = new MultiSelectComboBox<>();
 
@@ -29,18 +29,18 @@ public class SecurityTabContent extends VerticalLayout {
         userSelect.setItems(userService.findAll());
         userSelect.setItemLabelGenerator(User::getName);
         userSelect.setVisible(false);
-        reportVisibilityRadioButtonGroup.setItems(ReportVisibility.values());
-        reportVisibilityRadioButtonGroup.setItemLabelGenerator(ReportVisibility::getDescription);
+        reportVisibilityRadioButtonGroup.setItems(Visibility.values());
+        reportVisibilityRadioButtonGroup.setItemLabelGenerator(Visibility::getDescription);
         reportVisibilityRadioButtonGroup.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
         reportVisibilityRadioButtonGroup.setRenderer(new ComponentRenderer<>(rv -> {
             final VerticalLayout layout = new VerticalLayout();
             layout.setPadding(false);
             layout.setSpacing(false);
-            if (rv.equals(ReportVisibility.GROUP)) {
+            if (rv.equals(Visibility.GROUP)) {
                 layout.add(new Text(rv.getDescription()), groupSelect);
                 return layout;
             }
-            if (rv.equals(ReportVisibility.USERS)) {
+            if (rv.equals(Visibility.USERS)) {
                 layout.add(new Text(rv.getDescription()), userSelect);
                 return layout;
             }
@@ -48,12 +48,12 @@ public class SecurityTabContent extends VerticalLayout {
             return layout;
         }));
         reportVisibilityRadioButtonGroup.addValueChangeListener(e -> {
-            if (e.getValue().equals(ReportVisibility.GROUP)) {
+            if (e.getValue().equals(Visibility.GROUP)) {
                 groupSelect.setVisible(true);
                 userSelect.setVisible(false);
                 return;
             }
-            if (e.getValue().equals(ReportVisibility.USERS)) {
+            if (e.getValue().equals(Visibility.USERS)) {
                 groupSelect.setVisible(false);
                 userSelect.setVisible(true);
                 return;

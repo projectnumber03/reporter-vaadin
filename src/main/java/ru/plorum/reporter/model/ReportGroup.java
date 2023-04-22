@@ -27,7 +27,7 @@ public final class ReportGroup {
 
     @NonNull
     @Column(name = "NAME", nullable = false, length = 100, unique = true)
-    String nameGroup;
+    String name;
 
     @Column(name = "DESCRIPTION")
     String description;

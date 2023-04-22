@@ -14,7 +14,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
+@Setter
 @Entity
 @ToString
 @SuperBuilder
@@ -25,7 +26,6 @@ public final class Report {
 
     @Id
     @Column(length = 36)
-    @EqualsAndHashCode.Include
     UUID id;
 
     @ManyToOne
@@ -86,7 +86,7 @@ public final class Report {
     @JoinTable(name = "REPORT_USERS",
             joinColumns = @JoinColumn(name = "REPORT_ID"),
             inverseJoinColumns = @JoinColumn(name = "USER_ID"))
-    List<User> permittedUsers = new ArrayList<>();
+    Set<User> permittedUsers = new HashSet<>();
 
     @NonNull
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -103,6 +103,10 @@ public final class Report {
     @Transient
     ReportGroup reportGroup;
 
+    public Report(final UUID id) {
+        this.id = id;
+    }
+
     public Report clone() {
         return Report.builder()
                 .id(null)
@@ -118,7 +122,7 @@ public final class Report {
                 .statuses(new ArrayList<>(Collections.singletonList(ReportStatus.builder().status("NEW").date(LocalDateTime.now()).build())))
                 .locked(this.locked)
                 .queries(new ArrayList<>(queries.stream().map(Query::clone).collect(Collectors.toList())))
-                .permittedUsers(new ArrayList<>(permittedUsers))
+                .permittedUsers(new HashSet<>(permittedUsers))
                 .parameters(new ArrayList<>(parameters.stream().map(Parameter::clone).collect(Collectors.toList())))
                 .build();
     }
@@ -139,7 +143,21 @@ public final class Report {
     }
 
     public void setStatus(final String status) {
-        this.statuses.add(ReportStatus.builder().status(String.format("%d. %s", statuses.size() + 1, status)).date(LocalDateTime.now()).build());
+        this.statuses.add(ReportStatus.builder().id(UUID.randomUUID()).status(String.format("%d. %s", statuses.size() + 1, status)).date(LocalDateTime.now()).build());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Report report = (Report) o;
+
+        return id != null ? id.equals(report.id) : report.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

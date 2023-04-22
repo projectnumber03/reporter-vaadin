@@ -53,7 +53,7 @@ public class UserService {
 //        final String email = SecurityContextHolder.getContext().getAuthentication().getName();
 //        if (StringUtils.isBlank(email)) return null;
 //        return userRepository.findByEmail(email);
-        return null;
+        return userRepository.findById(UUID.fromString("de8b1119-dbfc-44ea-b6a5-e889ac8e4042")).orElse(null);
     }
 
     public boolean isManager() {

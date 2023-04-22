@@ -4,23 +4,22 @@ package ru.plorum.reporter.view;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.tabs.TabSheet;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
-import ru.plorum.reporter.component.QueryTabContent;
-import ru.plorum.reporter.component.SchedulerTabContent;
-import ru.plorum.reporter.component.SecurityTabContent;
-import ru.plorum.reporter.component.SourcesTabContent;
+import ru.plorum.reporter.component.*;
 import ru.plorum.reporter.service.ConnectionService;
+import ru.plorum.reporter.service.ReportService;
 import ru.plorum.reporter.service.UserGroupService;
 import ru.plorum.reporter.service.UserService;
 
-import static ru.plorum.reporter.util.Constants.REPORT;
-import static ru.plorum.reporter.util.Constants.SAVE;
+import java.util.HashMap;
+import java.util.Map;
+
+import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(REPORT)
 @Route(value = "reports/upsert", layout = MainView.class)
-public class ReportUpsertView extends AbstractView {
+public class ReportUpsertView extends AbstractView implements HasUrlParameter<String> {
 
     private final UserService userService;
 
@@ -28,14 +27,24 @@ public class ReportUpsertView extends AbstractView {
 
     private final UserGroupService userGroupService;
 
+    private final ReportService reportService;
+
     private final TabSheet tabSheet = new TabSheet();
 
     private final Button saveButton = new Button(SAVE);
 
-    public ReportUpsertView(final UserService userService, final ConnectionService connectionService, final UserGroupService userGroupService) {
+    private final Map<String, Component> content = new HashMap<>();
+
+    public ReportUpsertView(
+            final UserService userService,
+            final ConnectionService connectionService,
+            final UserGroupService userGroupService,
+            final ReportService reportService
+    ) {
         this.userService = userService;
         this.connectionService = connectionService;
         this.userGroupService = userGroupService;
+        this.reportService = reportService;
     }
 
     @Override
@@ -53,15 +62,29 @@ public class ReportUpsertView extends AbstractView {
     private TabSheet createMenuTabs() {
         tabSheet.setWidthFull();
         tabSheet.setHeightFull();
-        tabSheet.add("Запросы отчёта", createQueriesTabContent());
-        tabSheet.add("Планировщик", createSchedulerTabContent());
-        tabSheet.add("Источники", createSourcesTabContent());
-        tabSheet.add("Импорт/экспорт", createImportExportTabContent());
-        tabSheet.add("Безопасность", createSecurityTabContent());
+        final Component queriesTabContent = createQueriesTabContent();
+        content.put(REPORT_QUERIES, queriesTabContent);
+        final Component schedulerTabContent = createSchedulerTabContent();
+        content.put(SCHEDULER, schedulerTabContent);
+        final Component sourcesTabContent = createSourcesTabContent();
+        content.put(SOURCES, sourcesTabContent);
+        final Component importExportTabContent = createImportExportTabContent();
+        content.put(IMPORT_EXPORT, importExportTabContent);
+        final Component securityTabContent = createSecurityTabContent();
+        content.put(SECURITY, securityTabContent);
+        tabSheet.add(REPORT_QUERIES, queriesTabContent);
+        tabSheet.add(SCHEDULER, schedulerTabContent);
+        tabSheet.add(SOURCES, sourcesTabContent);
+        tabSheet.add(IMPORT_EXPORT, importExportTabContent);
+        tabSheet.add(SECURITY, securityTabContent);
         return tabSheet;
     }
 
     private Component createSaveButton() {
+        saveButton.addClickListener(e -> {
+            reportService.saveFromContent(content);
+            saveButton.getUI().ifPresent(ui -> ui.navigate("my_reports"));
+        });
         return saveButton;
     }
 
@@ -80,11 +103,16 @@ public class ReportUpsertView extends AbstractView {
     }
 
     private Component createImportExportTabContent() {
-        return new QueryTabContent(); //todo
+        return new ImportExportTabContent();
     }
 
     private Component createSecurityTabContent() {
         return new SecurityTabContent(userService, userGroupService);
+    }
+
+    @Override
+    public void setParameter(final BeforeEvent event, @OptionalParameter final String s) {
+
     }
 
 }

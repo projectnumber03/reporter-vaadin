@@ -2,19 +2,25 @@ package ru.plorum.reporter.view;
 
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import jakarta.annotation.PostConstruct;
+import ru.plorum.reporter.model.Report;
+import ru.plorum.reporter.service.ReportGroupService;
+import ru.plorum.reporter.service.ReportService;
+
+import java.util.List;
 
 import static ru.plorum.reporter.util.Constants.ALL_REPORTS;
 
 @PageTitle(ALL_REPORTS)
 @Route(value = "all_reports", layout = MainView.class)
-public class AllReportView extends AbstractView {
+public class AllReportView extends MyReportView {
+
+    public AllReportView(final ReportService reportService, final ReportGroupService reportGroupService) {
+        super(reportService, reportGroupService);
+    }
 
     @Override
-    @PostConstruct
-    protected void initialize() {
-        super.initialize();
-        add(vertical);
+    protected List<Report> getReports() {
+        return getReportService().findAll();
     }
 
 }

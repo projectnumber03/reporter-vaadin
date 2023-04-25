@@ -23,6 +23,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 			<version>3.0.5</version>
 		</dependency>
@@ -66,7 +71,23 @@
 			<artifactId>passay</artifactId>
 			<version>1.6.3</version>
 		</dependency>
-
+		<!--Pdf-->
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>2.0.27</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.dhorions</groupId>
+			<artifactId>boxable</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+		<!--Xlsx-->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>

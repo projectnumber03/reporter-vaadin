@@ -10,15 +10,18 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.grid.dnd.GridDropLocation;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.shared.Registration;
 import lombok.Getter;
-import org.apache.logging.log4j.util.Strings;
+import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.model.Query;
 import ru.plorum.reporter.model.ReportGroup;
+import ru.plorum.reporter.service.ReportGroupService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +40,13 @@ public class QueryTabContent extends VerticalLayout {
 
     private final ComboBox<ReportGroup> reportGroup = new ComboBox<>("Группа");
 
+    private final ReportGroupService reportGroupService;
+
     private final Grid<Query> queryGrid = new Grid<>();
 
-    private final Button addQueryButton = new Button("Добавить запрос");
+    private final Button addQueryButton = new Button();
+
+    private final Button removeQueryButton = new Button();
 
     private Query draggedItem;
 
@@ -47,9 +54,18 @@ public class QueryTabContent extends VerticalLayout {
 
     private Registration dropListener;
 
-    public QueryTabContent() {
+    public QueryTabContent(final ReportGroupService reportGroupService) {
+        this.reportGroupService = reportGroupService;
         setHeightFull();
-        add(name, description, reportGroup, createQueryGrid(), createAddQueryButton());
+        add(name, description, createReportGroup(), createQueryGrid(), new HorizontalLayout(createAddQueryButton(), createRemoveQueryButton()));
+    }
+
+    private Component createReportGroup() {
+        reportGroup.setItemLabelGenerator(ReportGroup::getName);
+        reportGroup.setAllowCustomValue(true);
+        reportGroup.setItems(reportGroupService.findMy());
+        reportGroup.addCustomValueSetListener(e -> new ConfirmationDialog(String.format("Создать группу \"%s\"?", e.getDetail()), () -> reportGroupService.create(e.getDetail()), false).open());
+        return reportGroup;
     }
 
     private Component createQueryGrid() {
@@ -60,7 +76,7 @@ public class QueryTabContent extends VerticalLayout {
             layout.add(q.getSqlTextField());
             layout.add(q.getGenerateReportCheckbox());
             layout.add(q.getSubReportField());
-            final Details details = new Details(Strings.EMPTY, layout);
+            final Details details = new Details(String.format("Запрос %d", items.indexOf(q) + 1), layout);
             details.setOpened(true);
             details.addThemeVariants(DetailsVariant.SMALL);
             details.setWidthFull();
@@ -97,12 +113,23 @@ public class QueryTabContent extends VerticalLayout {
     }
 
     private Component createAddQueryButton() {
+        addQueryButton.setIcon(VaadinIcon.PLUS_CIRCLE_O.create());
         addQueryButton.addClickListener(e -> {
             final UUID id = UUID.randomUUID();
             items.add(new Query(id));
             setItems();
         });
         return addQueryButton;
+    }
+
+    private Component createRemoveQueryButton() {
+        removeQueryButton.setIcon(VaadinIcon.MINUS_CIRCLE_O.create());
+        removeQueryButton.addClickListener(e -> {
+            if (CollectionUtils.isEmpty(items)) return;
+            items.remove(items.size() - 1);
+            setItems();
+        });
+        return removeQueryButton;
     }
 
 }

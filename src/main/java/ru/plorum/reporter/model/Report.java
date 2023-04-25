@@ -104,9 +104,6 @@ public final class Report {
     @JoinColumn(name = "SCHEDULER_TASK_ID", referencedColumnName = "id")
     SchedulerTask schedulerTask;
 
-    @Transient
-    ReportGroup reportGroup;
-
     public Report(final UUID id) {
         this.id = id;
     }
@@ -151,6 +148,11 @@ public final class Report {
         this.statuses.add(ReportStatus.builder().id(UUID.randomUUID()).status(String.format("%d. %s", statuses.size() + 1, status)).date(LocalDateTime.now()).build());
     }
 
+    public List<Query> getQueriesWithTransients() {
+        queries.forEach(Query::fillTransients);
+        return queries;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -165,4 +167,9 @@ public final class Report {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
+    public Visibility getVisibility() {
+        return Visibility.values()[this.accessType];
+    }
+
 }

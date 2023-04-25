@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.plorum.reporter.model.Privilege;
 import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.model.User;
+import ru.plorum.reporter.model.UserGroup;
 import ru.plorum.reporter.repository.UserRepository;
 
 import java.util.*;
@@ -37,6 +38,10 @@ public class UserService {
 
     public List<User> findByLogin(final String login) {
         return userRepository.findByLoginLike(login);
+    }
+
+    public List<User> findByGroup(final UserGroup userGroup) {
+        return userRepository.findAllByGroup(userGroup);
     }
 
     public void delete(final User user) {

@@ -6,14 +6,15 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
+import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.*;
-import ru.plorum.reporter.service.ConnectionService;
-import ru.plorum.reporter.service.ReportService;
-import ru.plorum.reporter.service.UserGroupService;
-import ru.plorum.reporter.service.UserService;
+import ru.plorum.reporter.model.Report;
+import ru.plorum.reporter.model.User;
+import ru.plorum.reporter.service.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static ru.plorum.reporter.util.Constants.*;
 
@@ -29,22 +30,28 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
 
     private final ReportService reportService;
 
+    private final ReportGroupService reportGroupService;
+
     private final TabSheet tabSheet = new TabSheet();
 
     private final Button saveButton = new Button(SAVE);
 
     private final Map<String, Component> content = new HashMap<>();
 
+    private final AtomicReference<Report> currentReport = new AtomicReference<>(new Report());
+
     public ReportUpsertView(
             final UserService userService,
             final ConnectionService connectionService,
             final UserGroupService userGroupService,
-            final ReportService reportService
+            final ReportService reportService,
+            final ReportGroupService reportGroupService
     ) {
         this.userService = userService;
         this.connectionService = connectionService;
         this.userGroupService = userGroupService;
         this.reportService = reportService;
+        this.reportGroupService = reportGroupService;
     }
 
     @Override
@@ -82,14 +89,14 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
 
     private Component createSaveButton() {
         saveButton.addClickListener(e -> {
-            reportService.saveFromContent(content);
+            reportService.saveFromContent(currentReport.get(), content);
             saveButton.getUI().ifPresent(ui -> ui.navigate("my_reports"));
         });
         return saveButton;
     }
 
     private Component createQueriesTabContent() {
-        return new QueryTabContent();
+        return new QueryTabContent(reportGroupService);
     }
 
     private Component createSchedulerTabContent() {
@@ -111,8 +118,33 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
     }
 
     @Override
-    public void setParameter(final BeforeEvent event, @OptionalParameter final String s) {
-
+    public void setParameter(final BeforeEvent beforeEvent, @OptionalParameter final String s) {
+        final var location = beforeEvent.getLocation();
+        final var queryParameters = location.getQueryParameters();
+        final var parametersMap = queryParameters.getParameters();
+        final var id = parametersMap.getOrDefault("id", Collections.emptyList());
+        if (CollectionUtils.isEmpty(id)) return;
+        final var report = reportService.findById(UUID.fromString(id.iterator().next()));
+        if (Objects.isNull(report)) return;
+        currentReport.set(report);
+        final var queryTabContent = (QueryTabContent) content.get(REPORT_QUERIES);
+        queryTabContent.getName().setValue(report.getName());
+        queryTabContent.getDescription().setId(report.getDescription());
+        Optional.ofNullable(report.getGroup()).ifPresent(queryTabContent.getReportGroup()::setValue);
+        final var queries = report.getQueriesWithTransients();
+        queryTabContent.getItems().clear();
+        queryTabContent.getItems().addAll(queries);
+        queryTabContent.getQueryGrid().setItems(queries);
+        final var sourcesTabContent = (SourcesTabContent) content.get(SOURCES);
+        sourcesTabContent.getConnectionComboBox().setValue(report.getConnection());
+        final var securityTabContent = (SecurityTabContent) content.get(SECURITY);
+        securityTabContent.getReportVisibilityRadioButtonGroup().setValue(report.getVisibility());
+        switch (securityTabContent.getReportVisibilityRadioButtonGroup().getValue()) {
+            case GROUPS ->
+                    securityTabContent.getGroupSelect().setValue(report.getPermittedUsers().stream().map(User::getGroup).distinct().collect(Collectors.toList()));
+            case USERS ->
+                    securityTabContent.getUserSelect().setValue(report.getPermittedUsers().stream().distinct().collect(Collectors.toList()));
+        }
     }
 
 }

@@ -36,7 +36,7 @@ public class SecurityTabContent extends VerticalLayout {
             final VerticalLayout layout = new VerticalLayout();
             layout.setPadding(false);
             layout.setSpacing(false);
-            if (rv.equals(Visibility.GROUP)) {
+            if (rv.equals(Visibility.GROUPS)) {
                 layout.add(new Text(rv.getDescription()), groupSelect);
                 return layout;
             }
@@ -48,7 +48,7 @@ public class SecurityTabContent extends VerticalLayout {
             return layout;
         }));
         reportVisibilityRadioButtonGroup.addValueChangeListener(e -> {
-            if (e.getValue().equals(Visibility.GROUP)) {
+            if (e.getValue().equals(Visibility.GROUPS)) {
                 groupSelect.setVisible(true);
                 userSelect.setVisible(false);
                 return;

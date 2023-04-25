@@ -4,7 +4,8 @@ import java.time.format.DateTimeFormatter;
 
 public class Constants {
 
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     public static final String NA = "н/д";
     public static final String PROFILE = "Профиль";
     public static final String USERS = "Пользователи";
@@ -33,5 +34,9 @@ public class Constants {
     public static final String SECURITY = "Безопасность";
     public static final String NAME = "Название";
     public static final String DESCRIPTION = "Описание";
+    public static final String REPORT_OUTPUTS = "Сформированные отчёты";
+    public static final String REPORT_OUTPUT = "Сформированный отчёт";
+    public static final String OPEN = "Открыть";
+    public static final String SUCCESS = "Успешно";
 
 }

@@ -18,6 +18,11 @@ public class ConfirmationDialog extends Dialog {
     private final Runnable callback;
 
     public ConfirmationDialog(final String message, final Runnable callback) {
+        this(message, callback, true);
+    }
+
+    public ConfirmationDialog(final String message, final Runnable callback, final boolean closeOnOutsideClick) {
+        setCloseOnOutsideClick(closeOnOutsideClick);
         this.message = message;
         this.callback = callback;
         getElement().setAttribute("aria-label", "Подтвердить");

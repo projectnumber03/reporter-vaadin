@@ -13,6 +13,7 @@ import ru.plorum.reporter.component.TextAreaHighlighter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -71,6 +72,12 @@ public final class Query {
                 .subReport(this.subReport)
                 .parameters(new ArrayList<>(this.parameters.stream().map(Parameter::clone).collect(Collectors.toList())))
                 .build();
+    }
+
+    public void fillTransients() {
+        sqlTextField.setValue(sqlText);
+        generateReportCheckbox.setValue(report);
+        Optional.ofNullable(subReport).ifPresent(subReportField::setValue);
     }
 
 }

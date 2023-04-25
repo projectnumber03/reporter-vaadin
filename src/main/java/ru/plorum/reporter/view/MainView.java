@@ -75,8 +75,8 @@ public class MainView extends AppLayout {
         final var tabs = new Tabs();
         tabs.add(
                 createTab(VaadinIcon.PLUS_SQUARE_O, "Создать отчёт", ReportUpsertView.class),
-                createTab(VaadinIcon.FILE_TEXT_O, "Мои отчёты", MyReportView.class),
-                createTab(VaadinIcon.COPY_O, "Все отчёты", AllReportView.class),
+                createTab(VaadinIcon.FILE_TEXT_O, "Мои отчёты", ReportMyView.class),
+                createTab(VaadinIcon.COPY_O, "Все отчёты", ReportAllView.class),
                 createTab(VaadinIcon.COPY_O, "Группы отчётов", ReportGroupView.class)
         );
         tabs.setOrientation(Tabs.Orientation.VERTICAL);

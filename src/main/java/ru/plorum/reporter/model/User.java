@@ -21,7 +21,6 @@ public final class User {
     @Id
     @NonNull
     @Column(length = 36)
-    @EqualsAndHashCode.Include
     UUID id;
 
     @Column(name = "ACTIVE", nullable = false)
@@ -54,6 +53,25 @@ public final class User {
 
     public User(@NonNull final UUID id) {
         this.id = id;
+    }
+
+    public boolean isAdmin() {
+        return roles.stream().map(Role::getName).anyMatch("ROLE_ADMIN"::equals);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
 }

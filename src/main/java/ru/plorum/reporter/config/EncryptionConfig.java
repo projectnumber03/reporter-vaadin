@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class EncryptionConfig {
 
     @Bean("connectionEncoder")
-    public AES256TextEncryptor getConnectionEncoder(@Value("${jasypt.encryptor.password}") String key) {
+    public AES256TextEncryptor connectionEncoder(@Value("${jasypt.encryptor.password}") String key) {
         final AES256TextEncryptor encryptor = new AES256TextEncryptor();
         encryptor.setPassword(key);
         return encryptor;

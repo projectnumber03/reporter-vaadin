@@ -9,7 +9,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -18,7 +19,6 @@ import java.util.UUID;
 public final class ReportGroup {
 
     @Id
-    @NonNull
     @Column(length = 36)
     @EqualsAndHashCode.Include
     UUID id;
@@ -34,7 +34,7 @@ public final class ReportGroup {
     LocalDateTime lastReportCreationDate;
 
     @Column(name = "ACCESS_TYPE", length = 1)
-    int visible = 1;
+    int visible = 0;
 
     @NonNull
     @Enumerated(EnumType.STRING)
@@ -45,5 +45,24 @@ public final class ReportGroup {
             joinColumns = @JoinColumn(name = "REPORT_GROUP_ID"),
             inverseJoinColumns = @JoinColumn(name = "USER_ID"))
     Set<User> permittedUsers = new LinkedHashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ReportGroup that = (ReportGroup) o;
+
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    public Visibility getVisibility() {
+        return Visibility.values()[this.visible];
+    }
 
 }

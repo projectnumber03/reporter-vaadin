@@ -37,9 +37,11 @@ public class ReportGroupView extends AbstractView {
     @Override
     @PostConstruct
     protected void initialize() {
+        setHeightFull();
         final VerticalLayout layout = new VerticalLayout(new H4(REPORT_GROUPS), createNewButton());
         layout.setPadding(false);
         horizontal.add(layout);
+        vertical.setHeightFull();
         vertical.add(reportGroupTable);
         add(vertical);
     }
@@ -52,15 +54,17 @@ public class ReportGroupView extends AbstractView {
         final Grid<ReportGroup> grid = new Grid<>();
         grid.addColumn(createEditButtonRenderer()).setHeader(NAME);
         grid.addColumn(ReportGroup::getDescription).setHeader(DESCRIPTION);
-        grid.addColumn(rg -> Optional.ofNullable(rg.getLastReportCreationDate()).map(FORMATTER::format).orElse(NA)).setHeader("Дата последнего формирования отчёта");
+        grid.addColumn(rg -> Optional.ofNullable(rg.getLastReportCreationDate()).map(DATE_TIME_FORMATTER::format).orElse(NA)).setHeader("Дата последнего формирования отчёта");
+        final PaginatedGrid<ReportGroup> paginatedGrid = new PaginatedGrid<>(grid);
+        paginatedGrid.setItems(reportGroupService.findMy());
 
-        return reportGroupTable;
+        return paginatedGrid;
     }
 
     private ComponentRenderer<Button, ReportGroup> createEditButtonRenderer() {
         final SerializableBiConsumer<Button, ReportGroup> editButtonProcessor = (button, reportGroup) -> {
             button.setThemeName("tertiary");
-            button.setText(reportGroup.getDescription());
+            button.setText(reportGroup.getName());
             button.addClickListener(e -> button.getUI().ifPresent(ui -> ui.navigate("report_groups/upsert/", getQueryParameters(reportGroup))));
         };
         return new ComponentRenderer<>(Button::new, editButtonProcessor);

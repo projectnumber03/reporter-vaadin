@@ -95,7 +95,7 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
             connection.setUser(userService.getAuthenticatedUser());
             connection.setName(nameField.getValue());
             if (connectionService.test(connection)) {
-                final Notification notification = Notification.show("Успешно");
+                final Notification notification = Notification.show(SUCCESS);
                 notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 notification.setPosition(Notification.Position.TOP_CENTER);
                 return;
@@ -144,13 +144,13 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
         saveListener = saveButton.addClickListener(e -> {
             if (!validate()) return;
             saveConnection(connection.get().getId());
-            saveButton.getUI().ifPresent(ui -> ui.navigate("users"));
+            saveButton.getUI().ifPresent(ui -> ui.navigate("connections"));
         });
     }
 
     @Override
     public boolean validate() {
-        return false;
+        return true;
     }
 
 }

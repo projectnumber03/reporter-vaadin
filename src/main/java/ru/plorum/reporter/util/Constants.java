@@ -28,6 +28,7 @@ public class Constants {
     public static final String DELETE = "Удалить";
     public static final String MAKE = "Сформировать";
     public static final String REPORT_QUERIES = "Запросы отчёта";
+    public static final String REPORT_PARAMETERS = "Параметры отчёта";
     public static final String SCHEDULER = "Планировщик";
     public static final String SOURCES = "Источники";
     public static final String IMPORT_EXPORT = "Импорт/экспорт";
@@ -38,5 +39,6 @@ public class Constants {
     public static final String REPORT_OUTPUT = "Сформированный отчёт";
     public static final String OPEN = "Открыть";
     public static final String SUCCESS = "Успешно";
+    public static final String DEFAULT_VALUE = "Значение по умолчанию";
 
 }

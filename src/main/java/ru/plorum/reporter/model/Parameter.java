@@ -1,10 +1,7 @@
 package ru.plorum.reporter.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
@@ -20,45 +17,58 @@ public final class Parameter {
 
     @Id
     @Column(length = 36)
-    @EqualsAndHashCode.Include
     UUID id;
 
     @Column(name = "NAME")
     String name;
 
-    @Column(name = "ASK_USER")
-    boolean askUser;
+    @Column(name = "DESCRIPTION")
+    String description;
 
     @Column(name = "DEFAULT_VALUE")
     String defaultValue;
 
-    @Column(name = "DISPLAYED_NAME")
-    String displayedName;
-
     @Enumerated(EnumType.STRING)
     Type type;
 
-    public Parameter(final String param) {
-        final String[] parsedParam = param.split(";");
-        this.name = parsedParam[0];
-        this.defaultValue = parsedParam[1];
-        this.askUser = "true".equals(parsedParam[2]);
-        this.displayedName = parsedParam[3];
-        this.type = Type.valueOf(parsedParam[4]);
+    @Getter
+    @AllArgsConstructor
+    public enum Type {
+        STRING("Строка"),
+        DATE("Дата"),
+        INTEGER("Число");
+
+        private final String description;
+
     }
 
-    public enum Type {
-        STRING, DATE
+    public Parameter(final UUID id, final String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public Parameter clone() {
         return Parameter.builder()
                 .name(this.name)
-                .askUser(this.askUser)
                 .defaultValue(this.defaultValue)
-                .displayedName(this.displayedName)
+                .description(this.description)
                 .type(this.type)
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Parameter parameter = (Parameter) o;
+
+        return id.equals(parameter.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
 }

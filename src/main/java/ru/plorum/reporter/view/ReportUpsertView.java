@@ -3,6 +3,7 @@ package ru.plorum.reporter.view;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
@@ -40,18 +41,22 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
 
     private final AtomicReference<Report> currentReport = new AtomicReference<>(new Report());
 
+    private final DatePicker.DatePickerI18n i18n;
+
     public ReportUpsertView(
             final UserService userService,
             final ConnectionService connectionService,
             final UserGroupService userGroupService,
             final ReportService reportService,
-            final ReportGroupService reportGroupService
+            final ReportGroupService reportGroupService,
+            final DatePicker.DatePickerI18n i18n
     ) {
         this.userService = userService;
         this.connectionService = connectionService;
         this.userGroupService = userGroupService;
         this.reportService = reportService;
         this.reportGroupService = reportGroupService;
+        this.i18n = i18n;
     }
 
     @Override
@@ -69,17 +74,20 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
     private TabSheet createMenuTabs() {
         tabSheet.setWidthFull();
         tabSheet.setHeightFull();
-        final Component queriesTabContent = createQueriesTabContent();
+        final var queriesTabContent = createQueriesTabContent();
         content.put(REPORT_QUERIES, queriesTabContent);
-        final Component schedulerTabContent = createSchedulerTabContent();
+        final var parametersTabContent = createParametersTabContent((QueryTabContent) queriesTabContent);
+        content.put(REPORT_PARAMETERS, parametersTabContent);
+        final var schedulerTabContent = createSchedulerTabContent();
         content.put(SCHEDULER, schedulerTabContent);
-        final Component sourcesTabContent = createSourcesTabContent();
+        final var sourcesTabContent = createSourcesTabContent();
         content.put(SOURCES, sourcesTabContent);
-        final Component importExportTabContent = createImportExportTabContent();
+        final var importExportTabContent = createImportExportTabContent();
         content.put(IMPORT_EXPORT, importExportTabContent);
-        final Component securityTabContent = createSecurityTabContent();
+        final var securityTabContent = createSecurityTabContent();
         content.put(SECURITY, securityTabContent);
         tabSheet.add(REPORT_QUERIES, queriesTabContent);
+        tabSheet.add(REPORT_PARAMETERS, parametersTabContent);
         tabSheet.add(SCHEDULER, schedulerTabContent);
         tabSheet.add(SOURCES, sourcesTabContent);
         tabSheet.add(IMPORT_EXPORT, importExportTabContent);
@@ -97,6 +105,10 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
 
     private Component createQueriesTabContent() {
         return new QueryTabContent(reportGroupService);
+    }
+
+    private Component createParametersTabContent(final QueryTabContent queriesTabContent) {
+        return new ReportTabContent(queriesTabContent, i18n);
     }
 
     private Component createSchedulerTabContent() {

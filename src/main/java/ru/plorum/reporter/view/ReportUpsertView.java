@@ -108,7 +108,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
     }
 
     private Component createParametersTabContent(final QueryTabContent queriesTabContent) {
-        return new ReportTabContent(queriesTabContent, i18n);
+        return new ParameterTabContent(queriesTabContent, i18n);
     }
 
     private Component createSchedulerTabContent() {
@@ -118,7 +118,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
     }
 
     private Component createSourcesTabContent() {
-        return new SourcesTabContent(connectionService);
+        return new SourceTabContent(connectionService);
     }
 
     private Component createImportExportTabContent() {
@@ -147,7 +147,12 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
         queryTabContent.getItems().clear();
         queryTabContent.getItems().addAll(queries);
         queryTabContent.getQueryGrid().setItems(queries);
-        final var sourcesTabContent = (SourcesTabContent) content.get(SOURCES);
+        final var parameterTabContent = (ParameterTabContent) content.get(REPORT_PARAMETERS);
+        final var parameters = report.getParametersWithTransients();
+        parameterTabContent.getItems().clear();
+        parameterTabContent.getItems().addAll(parameters);
+        parameterTabContent.getParameterGrid().setItems(parameters);
+        final var sourcesTabContent = (SourceTabContent) content.get(SOURCES);
         sourcesTabContent.getConnectionComboBox().setValue(report.getConnection());
         final var securityTabContent = (SecurityTabContent) content.get(SECURITY);
         securityTabContent.getReportVisibilityRadioButtonGroup().setValue(report.getVisibility());

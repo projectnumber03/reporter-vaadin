@@ -153,6 +153,11 @@ public final class Report {
         return queries;
     }
 
+    public List<Parameter> getParametersWithTransients() {
+        parameters.forEach(Parameter::fillTransients);
+        return parameters;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,11 +1,21 @@
 package ru.plorum.reporter.model;
 
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextField;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.apache.logging.log4j.util.Strings;
 
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
+
+import static ru.plorum.reporter.util.Constants.*;
 
 @Data
 @Entity
@@ -25,11 +35,46 @@ public final class Parameter {
     @Column(name = "DESCRIPTION")
     String description;
 
+    @Setter(AccessLevel.NONE)
     @Column(name = "DEFAULT_VALUE")
     String defaultValue;
 
     @Enumerated(EnumType.STRING)
     Type type;
+
+    @Transient
+    TextField descriptionField = new TextField();
+
+    @Transient
+    DatePicker dateDefaultValue = new DatePicker();
+
+    @Transient
+    NumberField integerDefaultValue = new NumberField();
+
+    @Transient
+    TextField stringDefaultValue = new TextField();
+
+    @Transient
+    ComboBox<Type> typeComboBox = new ComboBox<>(Strings.EMPTY, Parameter.Type.values());
+
+    public void setDefaultValue() {
+        switch (typeComboBox.getValue()) {
+            case DATE -> this.defaultValue = Optional.ofNullable(dateDefaultValue.getValue()).map(DATE_FORMATTER::format).orElse(Strings.EMPTY);
+            case INTEGER -> this.defaultValue = Objects.toString(integerDefaultValue.getValue(), Strings.EMPTY);
+            case STRING -> this.defaultValue = Optional.ofNullable(stringDefaultValue.getValue()).orElse(Strings.EMPTY);
+        }
+    }
+
+    public void fillTransients() {
+        Optional.ofNullable(description).ifPresent(descriptionField::setValue);
+        Optional.ofNullable(type).ifPresent(typeComboBox::setValue);
+        if (Objects.isNull(type)) return;
+        switch (type) {
+            case DATE -> Optional.ofNullable(defaultValue).map(v -> LocalDate.parse(v, DATE_FORMATTER)).ifPresent(dateDefaultValue::setValue);
+            case INTEGER -> Optional.ofNullable(defaultValue).map(Double::valueOf).ifPresent(integerDefaultValue::setValue);
+            case STRING -> Optional.ofNullable(defaultValue).ifPresent(stringDefaultValue::setValue);
+        }
+    }
 
     @Getter
     @AllArgsConstructor

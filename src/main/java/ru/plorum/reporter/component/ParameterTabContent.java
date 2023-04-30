@@ -7,24 +7,22 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextField;
 import lombok.Getter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
 import ru.plorum.reporter.model.Parameter;
 
-import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static ru.plorum.reporter.util.Constants.*;
 
 
 @Getter
-public class ReportTabContent extends VerticalLayout {
+public class ParameterTabContent extends VerticalLayout {
 
-    private final Grid<Parameter> parameterTable = new Grid<>();
+    private final Grid<Parameter> parameterGrid = new Grid<>();
 
     private final List<Parameter> items = new ArrayList<>();
 
@@ -32,53 +30,59 @@ public class ReportTabContent extends VerticalLayout {
 
     private final QueryTabContent queryTabContent;
 
-    public ReportTabContent(final QueryTabContent queryTabContent, final DatePicker.DatePickerI18n i18n) {
+    public ParameterTabContent(final QueryTabContent queryTabContent, final DatePicker.DatePickerI18n i18n) {
         setHeightFull();
         this.queryTabContent = queryTabContent;
-        add(createParameterTable(i18n));
+        add(createParameterGrid(i18n));
         add(createDetectButton());
     }
 
-    private Component createParameterTable(final DatePicker.DatePickerI18n i18n) {
-        parameterTable.addColumn(Parameter::getName).setHeader(NAME);
+    private Component createParameterGrid(final DatePicker.DatePickerI18n i18n) {
+        final Function<Component, Component> wrappingFunction = c -> {
+            final var layout = new VerticalLayout();
+            layout.setWidthFull();
+            layout.setPadding(false);
+            layout.setSpacing(false);
+            layout.add(c);
+            return layout;
+        };
 
-        parameterTable.addComponentColumn(p -> {
-            var textField = new TextField();
-            textField.setWidthFull();
-            Optional.ofNullable(p.getDescription()).ifPresent(textField::setValue);
-            return textField;
+        parameterGrid.addColumn(Parameter::getName).setHeader(NAME);
+
+        parameterGrid.addComponentColumn(p -> {
+            final var descriptionField = p.getDescriptionField();
+            descriptionField.setWidthFull();
+            return wrappingFunction.apply(descriptionField);
         }).setHeader(DESCRIPTION);
 
-        final var dateColumn = parameterTable.addComponentColumn(p -> {
-            var datePicker = new DatePicker();
+        final var dateColumn = parameterGrid.addComponentColumn(p -> {
+            var datePicker = p.getDateDefaultValue();
             datePicker.setI18n(i18n);
-            if (Parameter.Type.DATE.equals(p.getType())) {
-                datePicker.setValue(LocalDate.parse(p.getDefaultValue(), DATE_FORMATTER));
-            }
             datePicker.setWidthFull();
-            return datePicker;
+            return wrappingFunction.apply(datePicker);
         }).setHeader(DEFAULT_VALUE);
 
-        final var integerColumn = parameterTable.addComponentColumn(p -> {
-            var numberField = new NumberField();
+        final var integerColumn = parameterGrid.addComponentColumn(p -> {
+            var numberField = p.getIntegerDefaultValue();
             numberField.setWidthFull();
-            return numberField;
+            return wrappingFunction.apply(numberField);
         }).setHeader(DEFAULT_VALUE);
 
-        final var stringColumn = parameterTable.addComponentColumn(p -> {
-            var textField = new TextField();
+        final var stringColumn = parameterGrid.addComponentColumn(p -> {
+            var textField = p.getStringDefaultValue();
             textField.setWidthFull();
-            return textField;
+            return wrappingFunction.apply(textField);
         }).setHeader(DEFAULT_VALUE);
 
         Stream.of(dateColumn, integerColumn, stringColumn).forEach(c -> c.setVisible(false));
-        parameterTable.addComponentColumn(p -> {
-            final ComboBox<Parameter.Type> typeComboBox = new ComboBox<>();
+        parameterGrid.addComponentColumn(p -> {
+            final ComboBox<Parameter.Type> typeComboBox = p.getTypeComboBox();
             typeComboBox.setWidthFull();
-            typeComboBox.setItems(Parameter.Type.values());
             typeComboBox.setItemLabelGenerator(Parameter.Type::getDescription);
             typeComboBox.addValueChangeListener(e -> {
-                switch (e.getValue()) {
+                final var value = e.getValue();
+                if (Objects.isNull(value)) return;
+                switch (value) {
                     case DATE -> {
                         dateColumn.setVisible(true);
                         integerColumn.setVisible(false);
@@ -96,9 +100,9 @@ public class ReportTabContent extends VerticalLayout {
                     }
                 }
             });
-            return typeComboBox;
+            return wrappingFunction.apply(typeComboBox);
         }).setHeader("Тип");
-        return parameterTable;
+        return parameterGrid;
     }
 
     private Component createDetectButton() {
@@ -115,7 +119,7 @@ public class ReportTabContent extends VerticalLayout {
                 .toList();
         items.clear();
         items.addAll(parameters);
-        parameterTable.setItems(parameters);
+        parameterGrid.setItems(items);
     }
 
 }

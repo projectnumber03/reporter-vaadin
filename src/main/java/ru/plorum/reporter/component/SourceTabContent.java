@@ -8,14 +8,14 @@ import ru.plorum.reporter.model.connection.Connection;
 import ru.plorum.reporter.service.ConnectionService;
 
 @Getter
-public class SourcesTabContent extends VerticalLayout {
+public class SourceTabContent extends VerticalLayout {
 
     @Getter(AccessLevel.NONE)
     private final ConnectionService connectionService;
 
     private final ComboBox<Connection> connectionComboBox = new ComboBox<>("Источники для выборки данных");
 
-    public SourcesTabContent(final ConnectionService connectionService) {
+    public SourceTabContent(final ConnectionService connectionService) {
         this.connectionService = connectionService;
         setHeightFull();
         connectionComboBox.setItemLabelGenerator(Connection::getDescription);

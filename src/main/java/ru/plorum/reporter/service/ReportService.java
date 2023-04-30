@@ -10,9 +10,10 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import ru.plorum.reporter.component.ParameterTabContent;
 import ru.plorum.reporter.component.QueryTabContent;
 import ru.plorum.reporter.component.SecurityTabContent;
-import ru.plorum.reporter.component.SourcesTabContent;
+import ru.plorum.reporter.component.SourceTabContent;
 import ru.plorum.reporter.model.*;
 import ru.plorum.reporter.model.connection.Connection;
 import ru.plorum.reporter.repository.ReportRepository;
@@ -53,7 +54,8 @@ public class ReportService {
 
     public void saveFromContent(final Report report, final Map<String, Component> content) {
         final var queryTabContent = (QueryTabContent) content.get(REPORT_QUERIES);
-        final var sourcesTabContent = (SourcesTabContent) content.get(SOURCES);
+        final var parameterTabContent = (ParameterTabContent) content.get(REPORT_PARAMETERS);
+        final var sourcesTabContent = (SourceTabContent) content.get(SOURCES);
         final var securityTabContent = (SecurityTabContent) content.get(SECURITY);
         final var connection = sourcesTabContent.getConnectionComboBox().getValue();
         if (!connectionService.test(connection)) {
@@ -71,12 +73,18 @@ public class ReportService {
         report.setDateReport(LocalDateTime.now());
         report.setConnection(connection);
         report.getQueries().clear();
-        final Consumer<Query> action = q -> {
+        final Consumer<Query> queryAction = q -> {
             q.setSqlText(q.getSqlTextField().getValue());
             q.setReport(q.getGenerateReportCheckbox().getValue());
             q.setSubReport(q.getSubReportField().getValue());
         };
-        report.getQueries().addAll(queryTabContent.getItems().stream().peek(action).toList());
+        report.getQueries().addAll(queryTabContent.getItems().stream().peek(queryAction).toList());
+        final Consumer<Parameter> parameterAction = p -> {
+            p.setDescription(p.getDescriptionField().getValue());
+            p.setType(p.getTypeComboBox().getValue());
+            p.setDefaultValue();
+        };
+        report.getParameters().addAll(parameterTabContent.getItems().stream().peek(parameterAction).toList());
         report.setStatus("NEW");
         switch (securityTabContent.getReportVisibilityRadioButtonGroup().getValue()) {
             case ME -> report.getPermittedUsers().add(authenticatedUser);

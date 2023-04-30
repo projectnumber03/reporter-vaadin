@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(REPORT)
-@Route(value = "reports/upsert", layout = MainView.class)
+@Route(value = "report/upsert", layout = MainView.class)
 public class ReportUpsertView extends AbstractView implements HasUrlParameter<String> {
 
     private final UserService userService;

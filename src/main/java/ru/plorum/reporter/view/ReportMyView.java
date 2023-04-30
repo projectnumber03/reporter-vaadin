@@ -87,7 +87,7 @@ public class ReportMyView extends AbstractView {
         final SerializableBiConsumer<Button, Report> editButtonProcessor = (button, report) -> {
             button.setThemeName("tertiary");
             button.setText(report.getName());
-            button.addClickListener(e -> button.getUI().ifPresent(ui -> ui.navigate("reports/upsert/", getQueryParameters(report))));
+            button.addClickListener(e -> button.getUI().ifPresent(ui -> ui.navigate("report/upsert/", getQueryParameters(report))));
         };
         return new ComponentRenderer<>(Button::new, editButtonProcessor);
     }

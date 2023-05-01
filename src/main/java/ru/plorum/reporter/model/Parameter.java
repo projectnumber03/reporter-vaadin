@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -40,7 +41,7 @@ public final class Parameter {
     String defaultValue;
 
     @Enumerated(EnumType.STRING)
-    Type type;
+    Type type = Type.STRING;
 
     @Transient
     TextField descriptionField = new TextField();
@@ -70,9 +71,9 @@ public final class Parameter {
         Optional.ofNullable(type).ifPresent(typeComboBox::setValue);
         if (Objects.isNull(type)) return;
         switch (type) {
-            case DATE -> Optional.ofNullable(defaultValue).map(v -> LocalDate.parse(v, DATE_FORMATTER)).ifPresent(dateDefaultValue::setValue);
-            case INTEGER -> Optional.ofNullable(defaultValue).map(Double::valueOf).ifPresent(integerDefaultValue::setValue);
-            case STRING -> Optional.ofNullable(defaultValue).ifPresent(stringDefaultValue::setValue);
+            case DATE -> Optional.ofNullable(defaultValue).filter(StringUtils::hasText).map(v -> LocalDate.parse(v, DATE_FORMATTER)).ifPresent(dateDefaultValue::setValue);
+            case INTEGER -> Optional.ofNullable(defaultValue).filter(StringUtils::hasText).map(Double::valueOf).ifPresent(integerDefaultValue::setValue);
+            case STRING -> Optional.ofNullable(defaultValue).filter(StringUtils::hasText).ifPresent(stringDefaultValue::setValue);
         }
     }
 

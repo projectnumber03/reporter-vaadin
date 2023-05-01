@@ -30,7 +30,7 @@ public abstract class ReportTableContextMenu extends GridContextMenu<Report> {
             if (CollectionUtils.isEmpty(report.get().getParameters())) {
                 reportService.generate(report.get());
             }
-            makeMenuItem.getUI().ifPresent(ui -> ui.navigate(""));
+            makeMenuItem.getUI().ifPresent(ui -> ui.navigate("report/parameters", getQueryParameters(report.get())));
         });
 
         final var reportOutputsMenuItem = addItem(REPORT_OUTPUTS);

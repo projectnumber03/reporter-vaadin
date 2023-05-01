@@ -55,26 +55,27 @@ public class ParameterTabContent extends VerticalLayout {
             return wrappingFunction.apply(descriptionField);
         }).setHeader(DESCRIPTION);
 
-        final var dateColumn = parameterGrid.addComponentColumn(p -> {
-            var datePicker = p.getDateDefaultValue();
-            datePicker.setI18n(i18n);
-            datePicker.setWidthFull();
-            return wrappingFunction.apply(datePicker);
+        parameterGrid.addComponentColumn(p -> {
+            switch (p.getType()) {
+                case DATE -> {
+                    var datePicker = p.getDateDefaultValue();
+                    datePicker.setI18n(i18n);
+                    datePicker.setWidthFull();
+                    return wrappingFunction.apply(datePicker);
+                }
+                case INTEGER -> {
+                    var numberField = p.getIntegerDefaultValue();
+                    numberField.setWidthFull();
+                    return wrappingFunction.apply(numberField);
+                }
+                default -> {
+                    var textField = p.getStringDefaultValue();
+                    textField.setWidthFull();
+                    return wrappingFunction.apply(textField);
+                }
+            }
         }).setHeader(DEFAULT_VALUE);
 
-        final var integerColumn = parameterGrid.addComponentColumn(p -> {
-            var numberField = p.getIntegerDefaultValue();
-            numberField.setWidthFull();
-            return wrappingFunction.apply(numberField);
-        }).setHeader(DEFAULT_VALUE);
-
-        final var stringColumn = parameterGrid.addComponentColumn(p -> {
-            var textField = p.getStringDefaultValue();
-            textField.setWidthFull();
-            return wrappingFunction.apply(textField);
-        }).setHeader(DEFAULT_VALUE);
-
-        Stream.of(dateColumn, integerColumn, stringColumn).forEach(c -> c.setVisible(false));
         parameterGrid.addComponentColumn(p -> {
             final ComboBox<Parameter.Type> typeComboBox = p.getTypeComboBox();
             typeComboBox.setWidthFull();
@@ -82,23 +83,10 @@ public class ParameterTabContent extends VerticalLayout {
             typeComboBox.addValueChangeListener(e -> {
                 final var value = e.getValue();
                 if (Objects.isNull(value)) return;
-                switch (value) {
-                    case DATE -> {
-                        dateColumn.setVisible(true);
-                        integerColumn.setVisible(false);
-                        stringColumn.setVisible(false);
-                    }
-                    case INTEGER -> {
-                        dateColumn.setVisible(false);
-                        integerColumn.setVisible(true);
-                        stringColumn.setVisible(false);
-                    }
-                    case STRING -> {
-                        dateColumn.setVisible(false);
-                        integerColumn.setVisible(false);
-                        stringColumn.setVisible(true);
-                    }
-                }
+                items.stream().filter(item -> item.equals(p)).findAny().ifPresent(v -> {
+                    v.setType(e.getValue());
+                    parameterGrid.setItems(items);
+                });
             });
             return wrappingFunction.apply(typeComboBox);
         }).setHeader("Тип");

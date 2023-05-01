@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import ru.plorum.reporter.component.ParameterTabContent;
@@ -84,6 +85,7 @@ public class ReportService {
             p.setType(p.getTypeComboBox().getValue());
             p.setDefaultValue();
         };
+        report.getParameters().clear();
         report.getParameters().addAll(parameterTabContent.getItems().stream().peek(parameterAction).toList());
         report.setStatus("NEW");
         switch (securityTabContent.getReportVisibilityRadioButtonGroup().getValue()) {
@@ -127,13 +129,13 @@ public class ReportService {
                 reportOutput.setReport(report);
                 reportOutput.setUser(userService.getAuthenticatedUser());
                 reportOutput.setCreatedAt(LocalDateTime.now());
-                final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSourceService.createDataSource(connection));
+                final JdbcTemplate template = new JdbcTemplate(dataSourceService.createDataSource(connection));
                 report.getQueries().forEach(q -> {
                     if (!q.isReport()) {
-                        jdbcTemplate.execute(q.getSqlText());
+                        template.execute(q.getSqlText());
                         return;
                     }
-                    final List<Map<String, Object>> rawData = jdbcTemplate.queryForList(q.getSqlText());
+                    final List<Map<String, Object>> rawData = template.queryForList(q.getSqlText());
                     final Function<Map<String, Object>, Stream<ReportOutputData>> mapper = row -> row.entrySet().stream()
                             .map(e -> {
                                 final ReportOutputData outputData = new ReportOutputData();
@@ -153,6 +155,52 @@ public class ReportService {
                     notification.setPosition(Notification.Position.TOP_CENTER);
                 });
             } catch (Exception e) {
+                e.printStackTrace();
+                ui.access(() -> {
+                    final Notification notification = Notification.show("Ошибка формирования отчёта");
+                    notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    notification.setPosition(Notification.Position.TOP_CENTER);
+                });
+            }
+        });
+    }
+
+    public void generate(final Report report, final Map<String, Object> parameters) {
+        executorService.execute(() -> {
+            try {
+                final Connection connection = report.getConnection();
+                if (Objects.isNull(connection)) return;
+                final ReportOutput reportOutput = new ReportOutput(UUID.randomUUID());
+                reportOutput.setReport(report);
+                reportOutput.setUser(userService.getAuthenticatedUser());
+                reportOutput.setCreatedAt(LocalDateTime.now());
+                final NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dataSourceService.createDataSource(connection));
+                report.getQueries().forEach(q -> {
+                    if (!q.isReport()) {
+                        template.update(q.getSqlText(), parameters);
+                        return;
+                    }
+                    final List<Map<String, Object>> rawData = template.queryForList(q.getSqlText(), parameters);
+                    final Function<Map<String, Object>, Stream<ReportOutputData>> mapper = row -> row.entrySet().stream()
+                            .map(e -> {
+                                final ReportOutputData outputData = new ReportOutputData();
+                                outputData.setId(UUID.randomUUID());
+                                outputData.setQuery(q);
+                                outputData.setRowNumber(rawData.indexOf(row));
+                                outputData.setKey(e.getKey());
+                                outputData.setValue(Objects.toString(e.getValue(), Strings.EMPTY));
+                                return outputData;
+                            });
+                    reportOutput.getData().addAll(rawData.stream().flatMap(mapper).toList());
+                });
+                reportOutputService.save(reportOutput);
+                ui.access(() -> {
+                    final Notification notification = Notification.show(SUCCESS);
+                    notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    notification.setPosition(Notification.Position.TOP_CENTER);
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
                 ui.access(() -> {
                     final Notification notification = Notification.show("Ошибка формирования отчёта");
                     notification.addThemeVariants(NotificationVariant.LUMO_ERROR);

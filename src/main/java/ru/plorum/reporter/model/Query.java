@@ -42,14 +42,6 @@ public final class Query {
     @Column(name = "SUB_REPORT", length = 250)
     String subReport;
 
-    @NonNull
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "QUERY_PARAMETERS",
-            joinColumns = @JoinColumn(name = "QUERY_ID"),
-            inverseJoinColumns = @JoinColumn(name = "PARAMETER_ID"))
-    List<Parameter> parameters;
-
     @Transient
     TextAreaHighlighter sqlTextField = new TextAreaHighlighter();
 
@@ -70,7 +62,6 @@ public final class Query {
                 .report(this.report)
                 .sqlText(this.sqlText)
                 .subReport(this.subReport)
-                .parameters(new ArrayList<>(this.parameters.stream().map(Parameter::clone).collect(Collectors.toList())))
                 .build();
     }
 

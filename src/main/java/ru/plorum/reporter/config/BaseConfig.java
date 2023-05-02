@@ -3,6 +3,7 @@ package ru.plorum.reporter.config;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import oshi.SystemInfo;
 
 import java.util.List;
 
@@ -19,6 +20,15 @@ public class BaseConfig {
         russianI18n.setCancel("Отмена");
         russianI18n.setFirstDayOfWeek(1);
         return russianI18n;
+    }
+
+    @Bean
+    public String systemId() {
+        return new SystemInfo()
+                .getHardware()
+                .getProcessor()
+                .getProcessorIdentifier()
+                .getProcessorID();
     }
 
 }

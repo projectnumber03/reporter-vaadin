@@ -16,7 +16,6 @@ public class Constants {
     public static final String CONNECTION = "Подключение";
     public static final String COPY = "Копировать";
     public static final String MODULES = "Модули";
-    public static final String SYSTEM_TABLES = "Таблицы системы";
     public static final String SETTINGS = "Настройки системы";
     public static final String MY_REPORTS = "Мои отчёты";
     public static final String ALL_REPORTS = "Все отчёты";

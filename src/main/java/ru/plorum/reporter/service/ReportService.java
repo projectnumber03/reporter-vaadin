@@ -43,6 +43,8 @@ public class ReportService {
 
     private final ReportOutputService reportOutputService;
 
+    private final ReportGroupService reportGroupService;
+
     private final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     @Setter
@@ -149,6 +151,7 @@ public class ReportService {
                     reportOutput.getData().addAll(rawData.stream().flatMap(mapper).toList());
                 });
                 reportOutputService.save(reportOutput);
+                Optional.ofNullable(report.getGroup()).ifPresent(rg -> rg.setLastReportCreationDate(reportOutput.getCreatedAt()));
                 ui.access(() -> {
                     final Notification notification = Notification.show(SUCCESS);
                     notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
@@ -194,6 +197,7 @@ public class ReportService {
                     reportOutput.getData().addAll(rawData.stream().flatMap(mapper).toList());
                 });
                 reportOutputService.save(reportOutput);
+                Optional.ofNullable(report.getGroup()).ifPresent(rg -> rg.setLastReportCreationDate(reportOutput.getCreatedAt()));
                 ui.access(() -> {
                     final Notification notification = Notification.show(SUCCESS);
                     notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);

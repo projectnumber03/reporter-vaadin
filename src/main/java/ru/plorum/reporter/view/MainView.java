@@ -57,7 +57,6 @@ public class MainView extends AppLayout {
                 createTab(VaadinIcon.USERS, USER_GROUPS, UserGroupView.class),
                 createTab(VaadinIcon.UNLINK, CONNECTIONS, ConnectionView.class),
                 createTab(VaadinIcon.CUBES, MODULES, ModuleView.class),
-                createTab(VaadinIcon.TABLE, SYSTEM_TABLES, SystemTableView.class),
                 createTab(VaadinIcon.WRENCH, SETTINGS, SettingsView.class)
         );
         tabs.setOrientation(Tabs.Orientation.VERTICAL);

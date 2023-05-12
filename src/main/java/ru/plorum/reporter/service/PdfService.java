@@ -58,7 +58,7 @@ public class PdfService extends ReportWriter {
             cell.setAlign(HorizontalAlignment.CENTER);
             table.addHeaderRow(headerRow);
             writeHeader(table);
-            data.values().forEach(r -> writeRow(table, r.stream().map(ReportOutputData::getValue).collect(Collectors.toList())));
+            data.values().forEach(r -> writeRow(table, r.stream().map(ReportOutputData::getValue).toList()));
             table.draw();
         }
     }

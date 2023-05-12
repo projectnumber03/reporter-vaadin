@@ -58,11 +58,10 @@ public class ReportMyView extends AbstractView {
         final Grid<Report> grid = new Grid<>();
         grid.addColumn(createEditButtonRenderer()).setHeader(NAME);
         grid.addColumn(r -> Optional.ofNullable(r.getGroup()).map(ReportGroup::getName).orElse(NA)).setHeader("Группа отчета");
-        grid.addColumn(r -> Optional.ofNullable(r.getDateReport()).map(DATE_TIME_FORMATTER::format).orElse(NA)).setHeader("Дата формирования отчета");
+        grid.addColumn(r -> Optional.ofNullable(r.getCreatedAt()).map(DATE_TIME_FORMATTER::format).orElse(NA)).setHeader("Дата формирования отчета");
         grid.addColumn(r -> r.getAuthor().getName()).setHeader("Автор");
         grid.addColumn(Report::getDescription).setHeader(DESCRIPTION);
         grid.addColumn(r -> Optional.ofNullable(r.getLastEditor()).map(User::getName).orElse(NA)).setHeader("Последний редактировавший");
-        grid.addColumn(Report::getStatus).setHeader("Статус");
         new ReportTableContextMenu(grid, reportService, reportGroupService) {
 
             @Override

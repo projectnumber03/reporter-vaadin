@@ -6,15 +6,16 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import lombok.Getter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
+import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.model.Parameter;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static ru.plorum.reporter.util.Constants.*;
 
@@ -105,6 +106,10 @@ public class ParameterTabContent extends VerticalLayout {
                 .flatMap(Collection::stream)
                 .map(p -> new Parameter(UUID.randomUUID(), p.getName()))
                 .toList();
+        if (CollectionUtils.isEmpty(parameters)) {
+            final var notification = Notification.show("Параметры не найдены");
+            notification.setPosition(Notification.Position.TOP_CENTER);
+        }
         items.clear();
         items.addAll(parameters);
         parameterGrid.setItems(items);

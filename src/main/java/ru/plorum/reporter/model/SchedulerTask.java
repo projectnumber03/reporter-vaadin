@@ -1,18 +1,20 @@
 package ru.plorum.reporter.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Data
 @Entity
 @SuperBuilder
-@EqualsAndHashCode
 @NoArgsConstructor
 @Accessors(chain = true)
 @Table(name = "SCHEDULER_TASKS")
@@ -20,21 +22,37 @@ import java.util.UUID;
 public final class SchedulerTask {
 
     @Id
-    @NonNull
     @Column(length = 36)
-    @EqualsAndHashCode.Include
     UUID id;
 
-    @Column
-    String time;
-
-    @ElementCollection
-    List<String> days;
-
-    @Column
-    long duration;
+    @Column(name = "CRON_EXPRESSION")
+    String cronExpression;
 
     @Column(name = "EMAIL")
-    String users;
+    String userEmails;
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        var that = (SchedulerTask) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum Type {
+
+        DAY("День недели"),
+        INTERVAL("Интервал, мин.");
+
+        private final String name;
+
+    }
 
 }

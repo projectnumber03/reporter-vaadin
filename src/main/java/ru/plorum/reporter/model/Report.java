@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -43,7 +42,7 @@ public final class Report {
     User lastEditor;
 
     @Column(name = "CREATED_AT")
-    LocalDateTime dateReport;
+    LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "CONNECTION_ID")
@@ -58,19 +57,6 @@ public final class Report {
 
     @Column(name = "ACCESS_TYPE", length = 1)
     int accessType;
-
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "REPORT_STATUSES",
-            joinColumns = @JoinColumn(name = "REPORT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "STATUS_ID"))
-    List<ReportStatus> statuses = new ArrayList<>();
-
-    @Column
-    boolean locked = true;
-
-    @Column
-    boolean history; //требуется формирование истории
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -111,41 +97,23 @@ public final class Report {
     public Report clone() {
         return Report.builder()
                 .id(null)
-                .author(this.author)
-                .name(formatNameReport(this.name))
-                .description(this.description)
-                .group(this.group)
-                .history(this.history)
-                .lastEditor(this.lastEditor)
-                .dateReport(this.dateReport)
-                .connection(this.connection)
-                .module(this.module)
-                .accessType(this.accessType)
-                .statuses(new ArrayList<>(Collections.singletonList(ReportStatus.builder().status("NEW").date(LocalDateTime.now()).build())))
-                .locked(this.locked)
-                .queries(new ArrayList<>(queries.stream().map(Query::clone).collect(Collectors.toList())))
+                .author(author)
+                .name(formatNameReport(name))
+                .description(description)
+                .group(group)
+                .lastEditor(lastEditor)
+                .createdAt(createdAt)
+                .connection(connection)
+                .module(module)
+                .accessType(accessType)
+                .queries(new ArrayList<>(queries.stream().map(Query::clone).toList()))
                 .permittedUsers(new HashSet<>(permittedUsers))
-                .parameters(new ArrayList<>(parameters.stream().map(Parameter::clone).collect(Collectors.toList())))
+                .parameters(new ArrayList<>(parameters.stream().map(Parameter::clone).toList()))
                 .build();
     }
 
     private String formatNameReport(final String nameReport) {
         return String.format("Копия {%s} %s", DateTimeFormatter.ofPattern("dd.MM.yyyy").format(LocalDate.now()), nameReport);
-    }
-
-    public void unlock(final String value) {
-        this.locked = !"on".equals(value);
-    }
-
-    public String getStatus() {
-        return statuses.stream()
-                .max(Comparator.comparing(ReportStatus::getDate))
-                .map(ReportStatus::getStatus)
-                .orElse("");
-    }
-
-    public void setStatus(final String status) {
-        this.statuses.add(ReportStatus.builder().id(UUID.randomUUID()).status(String.format("%d. %s", statuses.size() + 1, status)).date(LocalDateTime.now()).build());
     }
 
     public List<Query> getQueriesWithTransients() {
@@ -159,11 +127,11 @@ public final class Report {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Report report = (Report) o;
+        final var report = (Report) o;
 
         return id != null ? id.equals(report.id) : report.id == null;
     }
@@ -174,7 +142,7 @@ public final class Report {
     }
 
     public Visibility getVisibility() {
-        return Visibility.values()[this.accessType];
+        return Visibility.values()[accessType];
     }
 
 }

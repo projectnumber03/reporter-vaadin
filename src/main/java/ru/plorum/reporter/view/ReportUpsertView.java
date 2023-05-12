@@ -4,21 +4,26 @@ package ru.plorum.reporter.view;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.*;
 import ru.plorum.reporter.model.Report;
+import ru.plorum.reporter.model.SchedulerCronExpression;
+import ru.plorum.reporter.model.SchedulerTask;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.service.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import static ru.plorum.reporter.util.Constants.*;
 
+@Slf4j
 @PageTitle(REPORT)
 @Route(value = "report/upsert", layout = MainView.class)
 public class ReportUpsertView extends AbstractView implements HasUrlParameter<String> {
@@ -32,6 +37,8 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
     private final ReportService reportService;
 
     private final ReportGroupService reportGroupService;
+
+    private final ReportSchedulerService reportSchedulerService;
 
     private final TabSheet tabSheet = new TabSheet();
 
@@ -49,6 +56,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
             final UserGroupService userGroupService,
             final ReportService reportService,
             final ReportGroupService reportGroupService,
+            final ReportSchedulerService reportSchedulerService,
             final DatePicker.DatePickerI18n i18n
     ) {
         this.userService = userService;
@@ -56,6 +64,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
         this.userGroupService = userGroupService;
         this.reportService = reportService;
         this.reportGroupService = reportGroupService;
+        this.reportSchedulerService = reportSchedulerService;
         this.i18n = i18n;
     }
 
@@ -78,7 +87,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
         content.put(REPORT_QUERIES, queriesTabContent);
         final var parametersTabContent = createParametersTabContent((QueryTabContent) queriesTabContent);
         content.put(REPORT_PARAMETERS, parametersTabContent);
-        final var schedulerTabContent = createSchedulerTabContent();
+        final var schedulerTabContent = createSchedulerTabContent((QueryTabContent) queriesTabContent);
         content.put(SCHEDULER, schedulerTabContent);
         final var sourcesTabContent = createSourcesTabContent();
         content.put(SOURCES, sourcesTabContent);
@@ -96,9 +105,17 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
     }
 
     private Component createSaveButton() {
-        saveButton.addClickListener(e -> {
-            reportService.saveFromContent(currentReport.get(), content);
-            saveButton.getUI().ifPresent(ui -> ui.navigate("my_reports"));
+        saveButton.addClickListener(event -> {
+            try {
+                final var report = reportService.saveFromContent(currentReport.get(), content);
+                reportSchedulerService.saveFromContent(report, content);
+                saveButton.getUI().ifPresent(ui -> ui.navigate("my_reports"));
+            } catch (Exception e) {
+                log.error("error saving report", e);
+                final var notification = Notification.show("Ошибка сохранения отчёта: " + e);
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                notification.setPosition(Notification.Position.TOP_CENTER);
+            }
         });
         return saveButton;
     }
@@ -111,9 +128,9 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
         return new ParameterTabContent(queriesTabContent, i18n);
     }
 
-    private Component createSchedulerTabContent() {
-        var schedulerTabContent = new SchedulerTabContent();
-        schedulerTabContent.getSendTo().setItems(userService.findAll());
+    private Component createSchedulerTabContent(final QueryTabContent queriesTabContent) {
+        var schedulerTabContent = new SchedulerTabContent(queriesTabContent);
+        schedulerTabContent.getSendToField().setItems(userService.findAll());
         return schedulerTabContent;
     }
 
@@ -158,9 +175,43 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
         securityTabContent.getReportVisibilityRadioButtonGroup().setValue(report.getVisibility());
         switch (securityTabContent.getReportVisibilityRadioButtonGroup().getValue()) {
             case GROUPS ->
-                    securityTabContent.getGroupSelect().setValue(report.getPermittedUsers().stream().map(User::getGroup).distinct().collect(Collectors.toList()));
+                    securityTabContent.getGroupSelect().setValue(report.getPermittedUsers().stream().map(User::getGroup).distinct().toList());
             case USERS ->
-                    securityTabContent.getUserSelect().setValue(report.getPermittedUsers().stream().distinct().collect(Collectors.toList()));
+                    securityTabContent.getUserSelect().setValue(report.getPermittedUsers().stream().distinct().toList());
+        }
+        final var schedulerTabContent = (SchedulerTabContent) content.get(SCHEDULER);
+        final var task = report.getSchedulerTask();
+        if (Objects.isNull(task)) {
+            schedulerTabContent.getEnabledCheckbox().setValue(false);
+            return;
+        }
+        final var cronExpression = SchedulerCronExpression.parse(task.getCronExpression());
+        if (cronExpression.isEmpty()) {
+            schedulerTabContent.getEnabledCheckbox().setValue(false);
+            return;
+        }
+        schedulerTabContent.getEnabledCheckbox().setValue(true);
+        final var beginAt = cronExpression.get().beginAt();
+        schedulerTabContent.getHourField().setValue(beginAt.getHour());
+        schedulerTabContent.getMinuteField().setValue(beginAt.getMinute());
+        final var days = cronExpression.get().days();
+        schedulerTabContent.getDaySelectField().setItems(days);
+        final var interval = cronExpression.get().interval();
+        schedulerTabContent.getIntervalSelectField().setValue(interval);
+        final var emails = Arrays.stream(task.getUserEmails().split(",")).toList();
+        schedulerTabContent.getSendToField().select(userService.findActiveByEmails(emails));
+        if (CollectionUtils.isEmpty(days) && Objects.nonNull(interval)) {
+            schedulerTabContent.getRadioGroup().setValue(SchedulerTask.Type.INTERVAL);
+            schedulerTabContent.getIntervalSelectField().setReadOnly(false);
+            schedulerTabContent.getDaySelectField().deselectAll();
+            schedulerTabContent.getDaySelectField().setReadOnly(true);
+            return;
+        }
+        if (!CollectionUtils.isEmpty(days) && Objects.isNull(interval)) {
+            schedulerTabContent.getRadioGroup().setValue(SchedulerTask.Type.DAY);
+            schedulerTabContent.getDaySelectField().setReadOnly(false);
+            schedulerTabContent.getIntervalSelectField().clear();
+            schedulerTabContent.getIntervalSelectField().setReadOnly(true);
         }
     }
 

@@ -20,8 +20,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     List<User> findByLoginLike(final String login);
 
-    @Query("select u from User as u join fetch u.roles as r join fetch r.privileges where u.email = :email")
-    User findByEmail(@Param("email") final String email);
+    @Query("select u from User as u join fetch u.roles as r join fetch r.privileges where u.email in (:emails) and u.active = true")
+    List<User> findActiveByEmail(@Param("emails") final List<String> emails);
 
     List<User> findByActiveTrue();
 

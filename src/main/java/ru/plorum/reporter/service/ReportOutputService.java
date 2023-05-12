@@ -29,4 +29,13 @@ public class ReportOutputService {
         return reportOutputRepository.findAllByReportOrderByCreatedAtDesc(report);
     }
 
+    public Optional<ReportOutput> findFirstByReport(final Report report) {
+        if (Objects.isNull(report)) return Optional.empty();
+        return Optional.ofNullable(reportOutputRepository.findFirstByReportOrderByCreatedAtDesc(report))
+                .map(ReportOutput::getId)
+                .map(this::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get);
+    }
+
 }

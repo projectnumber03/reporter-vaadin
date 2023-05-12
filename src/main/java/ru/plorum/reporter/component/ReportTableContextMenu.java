@@ -9,6 +9,7 @@ import ru.plorum.reporter.model.Report;
 import ru.plorum.reporter.service.ReportGroupService;
 import ru.plorum.reporter.service.ReportService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,8 @@ public abstract class ReportTableContextMenu extends GridContextMenu<Report> {
             final var report = event.getItem();
             if (report.isEmpty()) return;
             if (CollectionUtils.isEmpty(report.get().getParameters())) {
-                reportService.generate(report.get());
+                reportService.generateInThread(report.get(), Collections.emptyMap(), true);
+                return;
             }
             makeMenuItem.getUI().ifPresent(ui -> ui.navigate("report/parameters", getQueryParameters(report.get())));
         });

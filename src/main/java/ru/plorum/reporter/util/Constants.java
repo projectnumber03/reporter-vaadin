@@ -1,6 +1,12 @@
 package ru.plorum.reporter.util;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.util.StringUtils;
+
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Optional;
 
 public class Constants {
 
@@ -39,5 +45,28 @@ public class Constants {
     public static final String OPEN = "Открыть";
     public static final String SUCCESS = "Успешно";
     public static final String DEFAULT_VALUE = "Значение по умолчанию";
+
+    @Getter
+    @AllArgsConstructor
+    public enum Day {
+
+        MONDAY("Понедельник", "MON"),
+        TUESDAY("Вторник", "TUE"),
+        WEDNESDAY("Среда", "WED"),
+        THURSDAY("Четверг", "THU"),
+        FRIDAY("Пятница", "FRI"),
+        SATURDAY("Суббота", "SAT"),
+        SUNDAY("Воскресенье", "SUN");
+
+        private final String name;
+
+        private final String shortName;
+
+        public static Optional<Day> getByShortName(final String shortName) {
+            if (!StringUtils.hasText(shortName)) return Optional.empty();
+            return Arrays.stream(values()).filter(v -> shortName.equals(v.getShortName())).findAny();
+        }
+
+    }
 
 }

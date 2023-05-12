@@ -18,4 +18,6 @@ public interface ReportRepository extends JpaRepository<Report, UUID> {
 
     List<Report> findAllByAuthorOrLastEditorOrPermittedUsers_Id(final User author, final User lastEditor, @NonNull final UUID permittedUsers_id);
 
+    List<Report> findAllBySchedulerTaskIsNotNull();
+
 }

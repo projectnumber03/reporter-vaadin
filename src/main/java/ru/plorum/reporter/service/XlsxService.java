@@ -46,10 +46,10 @@ public class XlsxService extends ReportWriter {
         var row = currentSheet.createRow(counter.getAndIncrement());
         if (CollectionUtils.isEmpty(data)) return;
         final var firstRow = data.values().iterator().next();
-        writeRow(row, firstRow.stream().map(ReportOutputData::getKey).collect(Collectors.toList()));
+        writeRow(row, firstRow.stream().map(ReportOutputData::getKey).toList());
         for (var ro : data.values()) {
             row = currentSheet.createRow(counter.getAndIncrement());
-            writeRow(row, ro.stream().map(ReportOutputData::getValue).collect(Collectors.toList()));
+            writeRow(row, ro.stream().map(ReportOutputData::getValue).toList());
         }
         for (int i = 0; i < currentSheet.getRow(0).getPhysicalNumberOfCells(); i++) {
             currentSheet.autoSizeColumn(i);

@@ -18,7 +18,6 @@ import ru.plorum.reporter.service.UserGroupService;
 import ru.plorum.reporter.service.UserService;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static ru.plorum.reporter.util.Constants.*;
 
@@ -100,9 +99,9 @@ public class ReportGroupUpsertView extends AbstractView implements HasUrlParamet
         securityTabContent.getReportVisibilityRadioButtonGroup().setValue(reportGroup.getVisibility());
         switch (securityTabContent.getReportVisibilityRadioButtonGroup().getValue()) {
             case GROUPS ->
-                    securityTabContent.getGroupSelect().setValue(reportGroup.getPermittedUsers().stream().map(User::getGroup).distinct().collect(Collectors.toList()));
+                    securityTabContent.getGroupSelect().setValue(reportGroup.getPermittedUsers().stream().map(User::getGroup).distinct().toList());
             case USERS ->
-                    securityTabContent.getUserSelect().setValue(reportGroup.getPermittedUsers().stream().distinct().collect(Collectors.toList()));
+                    securityTabContent.getUserSelect().setValue(reportGroup.getPermittedUsers().stream().distinct().toList());
         }
     }
 

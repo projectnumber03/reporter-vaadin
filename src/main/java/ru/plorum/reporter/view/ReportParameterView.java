@@ -61,7 +61,7 @@ public class ReportParameterView extends AbstractView implements HasUrlParameter
                     .flatMap(Collection::stream)
                     .filter(entry -> Objects.nonNull(entry.getValue().getValue()))
                     .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().getValue()));
-            Optional.ofNullable(report).ifPresent(r -> reportService.generate(r, parameters));
+            Optional.ofNullable(report).ifPresent(r -> reportService.generateInThread(r, parameters, true));
             processButton.getUI().ifPresent(ui -> ui.navigate("my_reports"));
         });
 

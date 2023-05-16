@@ -23,6 +23,7 @@ public class ReportGroupService {
     private final UserService userService;
 
     public ReportGroup findById(final UUID id) {
+        if (Objects.isNull(id)) return null;
         return repository.findById(id).orElse(null);
     }
 

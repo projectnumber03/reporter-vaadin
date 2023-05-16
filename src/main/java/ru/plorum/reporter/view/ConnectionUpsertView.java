@@ -131,7 +131,7 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
         final var parametersMap = queryParameters.getParameters();
         final var id = parametersMap.getOrDefault("id", Collections.emptyList());
         if (CollectionUtils.isEmpty(id)) return;
-        final var connection = connectionService.find(UUID.fromString(id.iterator().next()));
+        final var connection = connectionService.findById(UUID.fromString(id.iterator().next()));
         if (connection.isEmpty()) return;
         typeField.setValue(connection.get().getType());
         descriptionField.setValue(connection.get().getDescription());

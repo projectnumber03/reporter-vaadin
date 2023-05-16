@@ -91,10 +91,20 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
         content.put(SCHEDULER, schedulerTabContent);
         final var sourcesTabContent = createSourcesTabContent();
         content.put(SOURCES, sourcesTabContent);
-        final var importExportTabContent = createImportExportTabContent();
-        content.put(IMPORT_EXPORT, importExportTabContent);
         final var securityTabContent = createSecurityTabContent();
         content.put(SECURITY, securityTabContent);
+        final var importExportTabContent = createImportExportTabContent(
+                (QueryTabContent) queriesTabContent,
+                (ParameterTabContent) parametersTabContent,
+                (SchedulerTabContent) schedulerTabContent,
+                (SourceTabContent) sourcesTabContent,
+                (SecurityTabContent) securityTabContent,
+                reportGroupService,
+                userService,
+                connectionService,
+                userGroupService
+        );
+        content.put(IMPORT_EXPORT, importExportTabContent);
         tabSheet.add(REPORT_QUERIES, queriesTabContent);
         tabSheet.add(REPORT_PARAMETERS, parametersTabContent);
         tabSheet.add(SCHEDULER, schedulerTabContent);
@@ -138,8 +148,28 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
         return new SourceTabContent(connectionService);
     }
 
-    private Component createImportExportTabContent() {
-        return new ImportExportTabContent();
+    private Component createImportExportTabContent(
+            final QueryTabContent queriesTabContent,
+            final ParameterTabContent parameterTabContent,
+            final SchedulerTabContent schedulerTabContent,
+            final SourceTabContent sourceTabContent,
+            final SecurityTabContent securityTabContent,
+            final ReportGroupService reportGroupService,
+            final UserService userService,
+            final ConnectionService connectionService,
+            final UserGroupService userGroupService
+    ) {
+        return new ImportExportTabContent(
+                queriesTabContent,
+                parameterTabContent,
+                schedulerTabContent,
+                sourceTabContent,
+                securityTabContent,
+                reportGroupService,
+                userService,
+                connectionService,
+                userGroupService
+        );
     }
 
     private Component createSecurityTabContent() {

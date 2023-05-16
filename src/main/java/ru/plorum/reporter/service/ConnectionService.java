@@ -14,6 +14,7 @@ import ru.plorum.reporter.repository.ConnectionRepository;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,11 +29,12 @@ public class ConnectionService {
     @Qualifier("connectionEncoder")
     AES256TextEncryptor encryptor;
 
-    public List<Connection> find() {
+    public List<Connection> findById() {
         return connectionRepository.findAll();
     }
 
-    public Optional<Connection> find(final UUID id) {
+    public Optional<Connection> findById(final UUID id) {
+        if (Objects.isNull(id)) return Optional.empty();
         return connectionRepository.findById(id);
     }
 

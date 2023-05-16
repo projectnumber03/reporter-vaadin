@@ -62,7 +62,7 @@ public class ConnectionView extends AbstractView {
         grid.addColumn(c -> Optional.ofNullable(c.getUser()).map(User::getName).orElse(NA)).setHeader("Автор");
         grid.addColumn(createActionRenderer()).setTextAlign(ColumnTextAlign.CENTER);
         final PaginatedGrid<Connection> paginatedGrid = new PaginatedGrid<>(grid);
-        paginatedGrid.setItems(connectionService.find());
+        paginatedGrid.setItems(connectionService.findById());
         return paginatedGrid;
     }
 
@@ -80,7 +80,7 @@ public class ConnectionView extends AbstractView {
             final String message = String.format("Хотите удалить подключение \"%s\"?", connection.getDescription());
             final Runnable callback = () -> {
                 connectionService.delete(connection);
-                connectionTable.setItems(connectionService.find());
+                connectionTable.setItems(connectionService.findById());
             };
             final Button button = new Button();
             button.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);

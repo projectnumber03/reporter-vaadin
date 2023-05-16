@@ -37,6 +37,11 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public List<User> findAllById(final Collection<UUID> ids) {
+        if (CollectionUtils.isEmpty(ids)) return Collections.emptyList();
+        return userRepository.findAllById(ids);
+    }
+
     public List<User> findByLogin(final String login) {
         return userRepository.findByLoginLike(login);
     }

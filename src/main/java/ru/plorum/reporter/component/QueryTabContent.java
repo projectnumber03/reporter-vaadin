@@ -93,7 +93,7 @@ public class QueryTabContent extends VerticalLayout {
         return queryGrid;
     }
 
-    private void setItems() {
+    public void setItems() {
         Optional.ofNullable(dropListener).ifPresent(Registration::remove);
         final GridListDataView<Query> dataView = queryGrid.setItems(items);
         dropListener = queryGrid.addDropListener(e -> {

@@ -19,7 +19,7 @@ public class SourceTabContent extends VerticalLayout {
         this.connectionService = connectionService;
         setHeightFull();
         connectionComboBox.setItemLabelGenerator(Connection::getDescription);
-        connectionComboBox.setItems(connectionService.find());
+        connectionComboBox.setItems(connectionService.findById());
         add(connectionComboBox);
     }
 

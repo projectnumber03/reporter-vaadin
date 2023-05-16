@@ -1,5 +1,6 @@
 package ru.plorum.reporter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -16,7 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import static ru.plorum.reporter.util.Constants.*;
+import static ru.plorum.reporter.util.Constants.DATE_FORMATTER;
 
 @Data
 @Entity
@@ -44,18 +45,23 @@ public final class Parameter {
     Type type = Type.STRING;
 
     @Transient
+    @JsonIgnore
     TextField descriptionField = new TextField();
 
     @Transient
+    @JsonIgnore
     DatePicker dateDefaultValue = new DatePicker();
 
     @Transient
+    @JsonIgnore
     NumberField integerDefaultValue = new NumberField();
 
     @Transient
+    @JsonIgnore
     TextField stringDefaultValue = new TextField();
 
     @Transient
+    @JsonIgnore
     ComboBox<Type> typeComboBox = new ComboBox<>(Strings.EMPTY, Parameter.Type.values());
 
     public void setDefaultValue() {

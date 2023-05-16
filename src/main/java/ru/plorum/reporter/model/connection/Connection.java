@@ -53,13 +53,13 @@ public abstract class Connection {
     public abstract String getDriver();
 
     public static Connection getByDriver(final String driver) {
-        switch (driver) {
-            case "com.microsoft.sqlserver.jdbc.SQLServerDriver": return new MSSQLConnection();
-            case "com.mysql.cj.jdbc.Driver": return new MYSQLConnection();
-            case "oracle.jdbc.driver.OracleDriver": return new OracleConnection();
-            case "org.postgresql.Driver": return new PostgresConnection();
-            default: return new H2Connection();
-        }
+        return switch (driver) {
+            case "com.microsoft.sqlserver.jdbc.SQLServerDriver" -> new MSSQLConnection();
+            case "com.mysql.cj.jdbc.Driver" -> new MYSQLConnection();
+            case "oracle.jdbc.driver.OracleDriver" -> new OracleConnection();
+            case "org.postgresql.Driver" -> new PostgresConnection();
+            default -> new H2Connection();
+        };
     }
 
 }

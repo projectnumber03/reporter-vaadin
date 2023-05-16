@@ -1,5 +1,6 @@
 package ru.plorum.reporter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.textfield.TextField;
 import jakarta.persistence.*;
@@ -7,15 +8,10 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import ru.plorum.reporter.component.TextAreaHighlighter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -43,12 +39,15 @@ public final class Query {
     String subReport;
 
     @Transient
+    @JsonIgnore
     TextAreaHighlighter sqlTextField = new TextAreaHighlighter();
 
     @Transient
+    @JsonIgnore
     Checkbox generateReportCheckbox = new Checkbox("Формировать отчёт");
 
     @Transient
+    @JsonIgnore
     TextField subReportField = new TextField("", "Название подотчёта");
 
     public Query(final UUID id) {

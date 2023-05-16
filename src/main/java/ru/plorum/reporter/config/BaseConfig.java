@@ -3,12 +3,19 @@ package ru.plorum.reporter.config;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import oshi.SystemInfo;
 
 import java.util.List;
 
 @Configuration
 public class BaseConfig {
+
+    @Bean
+    public PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder(8);
+    }
 
     @Bean
     public DatePicker.DatePickerI18n i18n() {

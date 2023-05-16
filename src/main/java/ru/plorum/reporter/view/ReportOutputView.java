@@ -7,6 +7,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.Report;
 import ru.plorum.reporter.model.ReportOutput;
@@ -22,6 +23,7 @@ import static ru.plorum.reporter.util.Constants.*;
 
 
 @PageTitle(REPORT_OUTPUTS)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report_outputs", layout = MainView.class)
 public class ReportOutputView extends AbstractView implements HasUrlParameter<String> {
 

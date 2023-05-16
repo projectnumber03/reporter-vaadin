@@ -14,7 +14,9 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -36,6 +38,7 @@ import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(USER)
 @RequiredArgsConstructor
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "users/upsert", layout = MainView.class)
 public class UserUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable {
 
@@ -66,6 +69,8 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
     private final UserService userService;
 
     private final UserGroupService userGroupService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @PostConstruct
@@ -115,7 +120,7 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
         user.setName(fioField.getValue());
         user.setGroup(groupField.getValue());
         user.setLogin(loginField.getValue());
-        user.setPassword(passwordField.getValue());
+        user.setPassword(passwordEncoder.encode(passwordField.getValue()));
         user.setRoles(rolesField.getSelectedItems());
         user.setCreatedOn(Optional.ofNullable(user.getCreatedOn()).orElse(LocalDateTime.now()));
         user.setEmail(emailField.getValue());
@@ -158,7 +163,7 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
 
     private String generateLogin(final String fio) {
         final var login = LoginGenerator.generate(fio);
-        if (CollectionUtils.isEmpty(userService.findByLogin(login))) return login;
+        if (CollectionUtils.isEmpty(userService.findByLoginLike(login))) return login;
         if (login.matches("\\D+_\\d+")) {
             return login.split("_")[0] + "_" + (Long.parseLong(login.split("_")[1]) + 1);
         }

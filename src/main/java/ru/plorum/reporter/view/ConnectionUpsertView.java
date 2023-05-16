@@ -11,6 +11,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.model.connection.*;
 import ru.plorum.reporter.service.ConnectionService;
@@ -21,6 +22,7 @@ import java.util.*;
 import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(CONNECTION)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "connections/upsert", layout = MainView.class)
 public class ConnectionUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable {
 

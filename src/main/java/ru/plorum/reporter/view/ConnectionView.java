@@ -15,6 +15,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import ru.plorum.reporter.component.ConfirmationDialog;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
@@ -28,6 +29,7 @@ import java.util.Optional;
 import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(CONNECTIONS)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "connections", layout = MainView.class)
 public class ConnectionView extends AbstractView {
 

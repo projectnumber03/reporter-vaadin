@@ -14,6 +14,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import org.jasypt.util.text.AES256TextEncryptor;
 import ru.plorum.reporter.VaadinApplication;
 import ru.plorum.reporter.model.Inn;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(SETTINGS)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "settings", layout = MainView.class)
 public class SettingsView extends AbstractView {
 

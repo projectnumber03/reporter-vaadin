@@ -9,6 +9,7 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.*;
@@ -25,6 +26,7 @@ import static ru.plorum.reporter.util.Constants.*;
 
 @Slf4j
 @PageTitle(REPORT)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report/upsert", layout = MainView.class)
 public class ReportUpsertView extends AbstractView implements HasUrlParameter<String> {
 

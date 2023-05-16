@@ -12,15 +12,18 @@ import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    @Query("select u from User as u join fetch u.roles where u.id = :id")
+    @Query("select u from User as u left join fetch u.roles where u.id = :id")
     Optional<User> findById(@Param("id") final UUID id);
 
-    @Query("select u from User as u join fetch u.roles")
+    @Query("select u from User as u left join fetch u.roles")
     List<User> findAllWithRoles();
 
     List<User> findByLoginLike(final String login);
 
-    @Query("select u from User as u join fetch u.roles as r join fetch r.privileges where u.email in (:emails) and u.active = true")
+    @Query("select u from User as u left join fetch u.roles where u.login = :login")
+    Optional<User> findByLogin(@Param("login") final String login);
+
+    @Query("select u from User as u left join fetch u.roles as r left join fetch r.privileges where u.email in (:emails) and u.active = true")
     List<User> findActiveByEmail(@Param("emails") final List<String> emails);
 
     List<User> findByActiveTrue();

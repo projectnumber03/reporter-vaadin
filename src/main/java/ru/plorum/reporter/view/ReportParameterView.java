@@ -8,6 +8,7 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.model.Parameter;
 import ru.plorum.reporter.model.Report;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
 import static ru.plorum.reporter.util.Constants.REPORT_PARAMETERS;
 
 @PageTitle(REPORT_PARAMETERS)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report/parameters", layout = MainView.class)
 public class ReportParameterView extends AbstractView implements HasUrlParameter<String> {
 

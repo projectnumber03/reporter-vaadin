@@ -15,6 +15,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import org.apache.logging.log4j.util.Strings;
 import ru.plorum.reporter.component.ConfirmationDialog;
 import ru.plorum.reporter.component.NewButton;
@@ -29,6 +30,7 @@ import java.util.Optional;
 import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(USER_GROUPS)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "groups", layout = MainView.class)
 public class UserGroupView extends AbstractView {
 

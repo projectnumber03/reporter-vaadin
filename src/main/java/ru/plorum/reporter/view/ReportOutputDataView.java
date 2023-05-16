@@ -13,6 +13,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.ReportOutputData;
 import ru.plorum.reporter.service.PdfService;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 import static ru.plorum.reporter.util.Constants.REPORT_OUTPUT;
 
 @PageTitle(REPORT_OUTPUT)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report_output", layout = MainView.class)
 public class ReportOutputDataView extends AbstractView implements HasUrlParameter<String> {
 

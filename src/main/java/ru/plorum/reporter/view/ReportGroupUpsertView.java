@@ -7,6 +7,7 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.ReportGroupTabContent;
 import ru.plorum.reporter.component.SecurityTabContent;
@@ -22,6 +23,7 @@ import java.util.*;
 import static ru.plorum.reporter.util.Constants.*;
 
 @PageTitle(REPORT_GROUP)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report_groups/upsert", layout = MainView.class)
 public class ReportGroupUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable {
 

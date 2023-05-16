@@ -49,9 +49,9 @@ public class MailService {
         sendMail(user.getEmail(), text, subject, null);
     }
 
-    public void sendInactive(final User user) {
+    public void sendInactive(final User user, final String password) {
         final String subject = "Регистрационные данные в системе Reports";
-        final String msg = String.format("Вы зарегистрированы в системе, Ваша учетная запись ожидает активации<br>Ваш логин: %s<br>Ваш пароль: %s<br><br><br><a href='http://%s'>%s</a>", user.getLogin(), user.getPassword(), domain, domain);
+        final String msg = String.format("Вы зарегистрированы в системе, Ваша учетная запись ожидает активации<br>Ваш логин: %s<br>Ваш пароль: %s<br><br><br><a href='http://%s'>%s</a>", user.getLogin(), password, domain, domain);
         sendMail(user, msg, subject);
     }
 

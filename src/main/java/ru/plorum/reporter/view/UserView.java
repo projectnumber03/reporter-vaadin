@@ -16,6 +16,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.util.CollectionUtils;
@@ -35,6 +36,7 @@ import static ru.plorum.reporter.util.Constants.DELETE;
 import static ru.plorum.reporter.util.Constants.USERS;
 
 @PageTitle(USERS)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @FieldDefaults(level = AccessLevel.PROTECTED)
 @Route(value = "users", layout = MainView.class)
 public class UserView extends AbstractView {

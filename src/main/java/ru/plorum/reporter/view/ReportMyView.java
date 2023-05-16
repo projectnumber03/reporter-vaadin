@@ -9,6 +9,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.plorum.reporter.component.ReportTableContextMenu;
@@ -27,6 +28,7 @@ import static ru.plorum.reporter.util.Constants.*;
 
 @Slf4j
 @PageTitle(MY_REPORTS)
+@RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "my_reports", layout = MainView.class)
 public class ReportMyView extends AbstractView {
 

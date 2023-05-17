@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static ru.plorum.reporter.util.Constants.*;
@@ -125,16 +126,25 @@ public class ReportService {
     }
 
     public void generateInThread(final Report report, final Map<String, Object> parameters, final boolean showNotification) {
-        executorService.execute(() -> generate(report, parameters, showNotification));
+        final var user = userService.getAuthenticatedUser();
+        executorService.execute(() -> generate(report, parameters, user, showNotification));
     }
 
     public void generate(final Report report, final Map<String, Object> parameters, final boolean showNotification) {
+        generate(report, parameters, null, showNotification);
+    }
+
+    public void generate(final Report report, final Map<String, Object> parameters, final User user, final boolean showNotification) {
         try {
             final var connection = report.getConnection();
             if (Objects.isNull(connection)) return;
             final var reportOutput = new ReportOutput(UUID.randomUUID());
             reportOutput.setReport(report);
-            Optional.ofNullable(userService.getAuthenticatedUser()).ifPresent(reportOutput::setUser);
+            final Supplier<User> userSupplier = () -> {
+                if (Objects.isNull(user)) return userService.getAuthenticatedUser();
+                return user;
+            };
+            Optional.ofNullable(userSupplier.get()).ifPresent(reportOutput::setUser);
             reportOutput.setCreatedAt(LocalDateTime.now());
             final var template = new NamedParameterJdbcTemplate(dataSourceService.createDataSource(connection));
             report.getQueries().forEach(q -> {

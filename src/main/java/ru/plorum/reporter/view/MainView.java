@@ -1,31 +1,43 @@
 package ru.plorum.reporter.view;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H6;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.VaadinSession;
 import lombok.Getter;
+import ru.plorum.reporter.model.Role;
+import ru.plorum.reporter.service.UserService;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static ru.plorum.reporter.util.Constants.*;
 
+
 public class MainView extends AppLayout {
+
+    private final UserService userService;
 
     @Getter
     private final H3 viewTitle = new H3();
 
-    public MainView() {
+    public MainView(final UserService userService) {
+        this.userService = userService;
         final var toggle = new DrawerToggle();
         final var title = new H1("Reporter");
         title.getStyle().set("font-size", "var(--lumo-font-size-l)").set("margin", "0");
@@ -38,7 +50,7 @@ public class MainView extends AppLayout {
         reporterMenuHeader.getStyle().set("padding", "10px 25px 10px 15px");
         addToDrawer(reporterMenuHeader);
         addToDrawer(createReportMenu());
-        addToNavbar(toggle, title);
+        addToNavbar(toggle, title, createUserData());
     }
 
     private Tabs getTabs() {
@@ -94,6 +106,28 @@ public class MainView extends AppLayout {
         Optional.ofNullable(navigationTarget).ifPresent(link::setRoute);
 
         return new Tab(link);
+    }
+
+    private VerticalLayout createUserData() {
+        final var layout = new VerticalLayout();
+        layout.setSpacing(false);
+        layout.setPadding(false);
+        layout.setAlignItems(FlexComponent.Alignment.END);
+        layout.setWidthFull();
+        final var menuBar = new MenuBar();
+        final var user = userService.getAuthenticatedUser();
+        final var menuItem = menuBar.addItem(new Html(String.format("<div style=\"width: 400px\">%s<br/>(%s)<div>", user.getName(), user.getRoles().stream().map(Role::getDescription).collect(Collectors.joining(", ")))));
+        final var logoutButton = new Button("Выйти");
+        logoutButton.setThemeName("tertiary");
+        logoutButton.setIcon(VaadinIcon.SIGN_OUT.create());
+        logoutButton.addClickListener(event -> {
+            VaadinSession.getCurrent().getSession().invalidate();
+            logoutButton.getUI().ifPresent(ui -> ui.getPage().reload());
+        });
+        menuItem.getSubMenu().addItem(logoutButton);
+        layout.add(menuBar);
+
+        return layout;
     }
 
     @Override

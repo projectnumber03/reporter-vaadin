@@ -21,6 +21,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.ChartFlow;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
@@ -223,7 +224,7 @@ public class ReportOutputDataView extends AbstractView implements HasUrlParamete
         xlsxAnchor.add(xlsxButton);
         final var counter = new AtomicInteger();
         reportOutputData.forEach((k, v) -> {
-            final var tabText = Optional.ofNullable(k.getSubReport()).orElse("Запрос " + counter.incrementAndGet());
+            final var tabText = Optional.ofNullable(Strings.trimToNull(k.getSubReport())).orElse("Запрос " + counter.incrementAndGet());
             tabContent.put(tabText, v);
             tabSheet.add(tabText, createReportOutputDataTable(tabText, v));
         });

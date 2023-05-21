@@ -10,6 +10,8 @@ import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.BeforeEvent;
@@ -34,6 +36,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static ru.plorum.reporter.util.Constants.REPORT_OUTPUT;
+import static ru.plorum.reporter.util.Constants.SUCCESS;
 
 @PageTitle(REPORT_OUTPUT)
 @RolesAllowed(value = {"ROLE_ADMIN"})
@@ -148,45 +151,52 @@ public class ReportOutputDataView extends AbstractView implements HasUrlParamete
     }
 
     public void buildChart(final ChartFlow.Type type) {
-        final var selectedTab = tabSheet.getSelectedTab();
-        final var selectedTabContent = tabContent.get(selectedTab.getLabel());
-        if (CollectionUtils.isEmpty(selectedTabContent)) return;
-        final var selectedHeaders = dataTableHeaderContent.get(selectedTab.getLabel()).entrySet().stream()
-                .filter(e -> e.getValue().getValue())
-                .map(Map.Entry::getKey)
-                .toList();
-        if (CollectionUtils.isEmpty(selectedHeaders) || selectedHeaders.size() < 2) return;
-        final var tableData = selectedTabContent.stream()
-                .sorted(Comparator.comparing(ReportOutputData::getRowNumber))
-                .collect(Collectors.groupingBy(ReportOutputData::getRowNumber));
-        if (CollectionUtils.isEmpty(tableData)) return;
-        final var firstRow = tableData.values().iterator().next().stream().collect(Collectors.toMap(ReportOutputData::getKey, rd -> rd));
-        final Supplier<Optional<String>> valueHeaderSupplier = () -> {
-            for (final String h : selectedHeaders) {
-                try {
-                    Integer.parseInt(firstRow.get(h).getValue());
-                    return Optional.of(h);
-                } catch (Exception e) {
+        try {
+            final var selectedTab = tabSheet.getSelectedTab();
+            final var selectedTabContent = tabContent.get(selectedTab.getLabel());
+            if (CollectionUtils.isEmpty(selectedTabContent)) return;
+            final var selectedHeaders = dataTableHeaderContent.get(selectedTab.getLabel()).entrySet().stream()
+                    .filter(e -> e.getValue().getValue())
+                    .map(Map.Entry::getKey)
+                    .toList();
+            if (CollectionUtils.isEmpty(selectedHeaders) || selectedHeaders.size() < 2) return;
+            final var tableData = selectedTabContent.stream()
+                    .sorted(Comparator.comparing(ReportOutputData::getRowNumber))
+                    .collect(Collectors.groupingBy(ReportOutputData::getRowNumber));
+            if (CollectionUtils.isEmpty(tableData)) return;
+            final var firstRow = tableData.values().iterator().next().stream().collect(Collectors.toMap(ReportOutputData::getKey, rd -> rd));
+            final Supplier<Optional<String>> valueHeaderSupplier = () -> {
+                for (final String h : selectedHeaders) {
+                    try {
+                        Integer.parseInt(firstRow.get(h).getValue());
+                        return Optional.of(h);
+                    } catch (Exception e) {
+                    }
                 }
-            }
-            return Optional.empty();
-        };
-        final var valueHeader = valueHeaderSupplier.get();
-        if (valueHeader.isEmpty()) return;
-        final var labelHeader = selectedHeaders.stream().filter(v -> !v.equals(valueHeader.get())).findAny();
-        if (labelHeader.isEmpty()) return;
-
-        final ArrayList<String> values = new ArrayList<>();
-        final ArrayList<String> labels = new ArrayList<>();
-        tableData.values().forEach(td -> {
-            final Map<String, ReportOutputData> data = td.stream().collect(Collectors.toMap(ReportOutputData::getKey, rd -> rd));
-            labels.add(data.get(labelHeader.get()).getValue());
-            values.add(data.get(valueHeader.get()).getValue());
-        });
-        final var chartLabel = "Диаграмма " + selectedTab.getLabel();
-        final var chartFlow = new ChartFlow(UUID.randomUUID().toString(), type, labels, values, valueHeader.get());
-
-        tabSheet.add(chartLabel, chartFlow);
+                return Optional.empty();
+            };
+            final var valueHeader = valueHeaderSupplier.get();
+            if (valueHeader.isEmpty()) return;
+            final var labelHeader = selectedHeaders.stream().filter(v -> !v.equals(valueHeader.get())).findAny();
+            if (labelHeader.isEmpty()) return;
+            final ArrayList<String> values = new ArrayList<>();
+            final ArrayList<String> labels = new ArrayList<>();
+            tableData.values().forEach(td -> {
+                final Map<String, ReportOutputData> data = td.stream().collect(Collectors.toMap(ReportOutputData::getKey, rd -> rd));
+                labels.add(data.get(labelHeader.get()).getValue());
+                values.add(data.get(valueHeader.get()).getValue());
+            });
+            final var chartLabel = "Диаграмма " + selectedTab.getLabel();
+            final var chartFlow = new ChartFlow(UUID.randomUUID().toString(), type, labels, values, valueHeader.get());
+            tabSheet.add(chartLabel, chartFlow);
+            final var notification = Notification.show(SUCCESS);
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            notification.setPosition(Notification.Position.TOP_CENTER);
+        } catch (Exception e) {
+            final var notification = Notification.show("Ошибка");
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            notification.setPosition(Notification.Position.TOP_CENTER);
+        }
     }
 
     @Override

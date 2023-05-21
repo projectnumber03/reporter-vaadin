@@ -78,6 +78,7 @@ public class ReportService {
         report.setConnection(connection);
         report.getQueries().clear();
         final Consumer<Query> queryAction = q -> {
+            q.setId(UUID.randomUUID());
             q.setSqlText(q.getSqlTextField().getValue());
             q.setReport(q.getGenerateReportCheckbox().getValue());
             q.setSubReport(q.getSubReportField().getValue());

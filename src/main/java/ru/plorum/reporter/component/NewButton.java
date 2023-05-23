@@ -10,7 +10,7 @@ public class NewButton extends VerticalLayout {
         setWidth("auto");
         setPadding(false);
         setAlignItems(Alignment.END);
-        final Button button = new Button(label);
+        final var button = new Button(label);
         button.setIcon(VaadinIcon.PLUS_CIRCLE.create());
         button.addClickListener(e -> button.getUI().ifPresent(ui -> ui.navigate(url)));
         add(button);

@@ -31,24 +31,24 @@ public class ConfirmationDialog extends Dialog {
     }
 
     private VerticalLayout createDialogLayout(final Dialog dialog) {
-        final H2 headline = new H2("Подтвердить");
+        final var headline = new H2("Подтвердить");
         headline.getStyle()
                 .set("margin", "var(--lumo-space-m) 0 0 0")
                 .set("font-size", "1.5em").set("font-weight", "bold");
-        final VerticalLayout fieldLayout = new VerticalLayout();
+        final var fieldLayout = new VerticalLayout();
         fieldLayout.setSpacing(false);
         fieldLayout.setPadding(false);
         fieldLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
         Optional.ofNullable(message).map(Label::new).ifPresent(fieldLayout::add);
-        final Button cancelButton = new Button("Отмена", e -> dialog.close());
-        final Button saveButton = new Button("ОК", e -> {
+        final var cancelButton = new Button("Отмена", e -> dialog.close());
+        final var saveButton = new Button("ОК", e -> {
             Optional.ofNullable(callback).ifPresent(Runnable::run);
             dialog.close();
         });
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        final HorizontalLayout buttonLayout = new HorizontalLayout(saveButton, cancelButton);
+        final var buttonLayout = new HorizontalLayout(saveButton, cancelButton);
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
-        final VerticalLayout dialogLayout = new VerticalLayout(headline, fieldLayout, buttonLayout);
+        final var dialogLayout = new VerticalLayout(headline, fieldLayout, buttonLayout);
         dialogLayout.setPadding(false);
         dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
         dialogLayout.getStyle().set("width", "300px").set("max-width", "100%");

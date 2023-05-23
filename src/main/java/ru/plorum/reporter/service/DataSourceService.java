@@ -13,7 +13,7 @@ public class DataSourceService {
     private final AES256TextEncryptor connectionEncoder;
 
     public DriverManagerDataSource createDataSource(final Connection connection) {
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        final var dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(connection.getDriver());
         dataSource.setUrl(connection.getConnectionString());
         dataSource.setUsername(connection.getLogin());

@@ -10,7 +10,7 @@ public class EncryptionConfig {
 
     @Bean("connectionEncoder")
     public AES256TextEncryptor connectionEncoder(@Value("${jasypt.encryptor.password}") String key) {
-        final AES256TextEncryptor encryptor = new AES256TextEncryptor();
+        final var encryptor = new AES256TextEncryptor();
         encryptor.setPassword(key);
         return encryptor;
     }

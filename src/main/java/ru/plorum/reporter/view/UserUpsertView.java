@@ -23,9 +23,9 @@ import org.springframework.util.StringUtils;
 import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.model.UserGroup;
+import ru.plorum.reporter.service.IUserService;
 import ru.plorum.reporter.service.RoleService;
 import ru.plorum.reporter.service.UserGroupService;
-import ru.plorum.reporter.service.UserService;
 import ru.plorum.reporter.util.LoginGenerator;
 import ru.plorum.reporter.util.PasswordGenerator;
 
@@ -66,7 +66,7 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
 
     private final RoleService roleService;
 
-    private final UserService userService;
+    private final IUserService userService;
 
     private final UserGroupService userGroupService;
 

@@ -11,7 +11,7 @@ import ru.plorum.reporter.model.UserPrincipal;
 @AllArgsConstructor
 public class DatabaseUserDetailsService implements UserDetailsService {
 
-    private final UserService userService;
+    private final IUserService userService;
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {

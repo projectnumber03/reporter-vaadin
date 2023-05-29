@@ -21,7 +21,7 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinSession;
 import lombok.Getter;
 import ru.plorum.reporter.model.Role;
-import ru.plorum.reporter.service.UserService;
+import ru.plorum.reporter.service.IUserService;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,12 +31,12 @@ import static ru.plorum.reporter.util.Constants.*;
 
 public class MainView extends AppLayout {
 
-    private final UserService userService;
+    private final IUserService userService;
 
     @Getter
     private final H3 viewTitle = new H3();
 
-    public MainView(final UserService userService) {
+    public MainView(final IUserService userService) {
         this.userService = userService;
         final var toggle = new DrawerToggle();
         final var title = new H1("Reporter");
@@ -56,7 +56,8 @@ public class MainView extends AppLayout {
     private Tabs getTabs() {
         final var tabs = new Tabs();
         tabs.add(
-                createTab(VaadinIcon.USER, "Профиль", ProfileView.class)
+                createTab(VaadinIcon.USER, "Профиль", ProfileView.class),
+                createTab(VaadinIcon.INFO, "О программе", AboutView.class)
         );
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         return tabs;

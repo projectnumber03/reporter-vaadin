@@ -20,7 +20,7 @@ public class ReportGroupService {
 
     private final ReportGroupRepository repository;
 
-    private final UserService userService;
+    private final IUserService userService;
 
     public ReportGroup findById(final UUID id) {
         if (Objects.isNull(id)) return null;

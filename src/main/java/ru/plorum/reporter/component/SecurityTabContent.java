@@ -10,8 +10,8 @@ import lombok.Getter;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.model.UserGroup;
 import ru.plorum.reporter.model.Visibility;
+import ru.plorum.reporter.service.IUserService;
 import ru.plorum.reporter.service.UserGroupService;
-import ru.plorum.reporter.service.UserService;
 
 @Getter
 public class SecurityTabContent extends VerticalLayout {
@@ -22,7 +22,7 @@ public class SecurityTabContent extends VerticalLayout {
 
     private final MultiSelectComboBox<User> userSelect = new MultiSelectComboBox<>();
 
-    public SecurityTabContent(final UserService userService, final UserGroupService userGroupService) {
+    public SecurityTabContent(final IUserService userService, final UserGroupService userGroupService) {
         groupSelect.setItems(userGroupService.findAll());
         groupSelect.setItemLabelGenerator(UserGroup::getName);
         groupSelect.setVisible(false);

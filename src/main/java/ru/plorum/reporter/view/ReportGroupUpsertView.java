@@ -14,9 +14,9 @@ import ru.plorum.reporter.component.SecurityTabContent;
 import ru.plorum.reporter.model.ReportGroup;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.model.Visibility;
+import ru.plorum.reporter.service.IUserService;
 import ru.plorum.reporter.service.ReportGroupService;
 import ru.plorum.reporter.service.UserGroupService;
-import ru.plorum.reporter.service.UserService;
 
 import java.util.*;
 
@@ -27,7 +27,7 @@ import static ru.plorum.reporter.util.Constants.*;
 @Route(value = "report_groups/upsert", layout = MainView.class)
 public class ReportGroupUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable {
 
-    private final UserService userService;
+    private final IUserService userService;
 
     private final UserGroupService userGroupService;
 
@@ -40,7 +40,7 @@ public class ReportGroupUpsertView extends AbstractView implements HasUrlParamet
     private final Map<String, Component> content = new HashMap<>();
 
     public ReportGroupUpsertView(
-            final UserService userService,
+            final IUserService userService,
             final UserGroupService userGroupService,
             final ReportGroupService reportGroupService
     ) {

@@ -19,9 +19,9 @@ import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.model.*;
 import ru.plorum.reporter.model.connection.Connection;
 import ru.plorum.reporter.service.ConnectionService;
+import ru.plorum.reporter.service.IUserService;
 import ru.plorum.reporter.service.ReportGroupService;
 import ru.plorum.reporter.service.UserGroupService;
-import ru.plorum.reporter.service.UserService;
 import ru.plorum.reporter.util.Constants;
 
 import java.io.ByteArrayInputStream;
@@ -49,7 +49,7 @@ public class ImportExportTabContent extends VerticalLayout {
 
     private final ReportGroupService reportGroupService;
 
-    private final UserService userService;
+    private final IUserService userService;
 
     private final ConnectionService connectionService;
 
@@ -66,7 +66,7 @@ public class ImportExportTabContent extends VerticalLayout {
             final SourceTabContent sourceTabContent,
             final SecurityTabContent securityTabContent,
             final ReportGroupService reportGroupService,
-            final UserService userService,
+            final IUserService userService,
             final ConnectionService connectionService,
             final UserGroupService userGroupService
     ) {

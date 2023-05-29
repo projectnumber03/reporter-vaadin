@@ -15,7 +15,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.model.connection.*;
 import ru.plorum.reporter.service.ConnectionService;
-import ru.plorum.reporter.service.UserService;
+import ru.plorum.reporter.service.IUserService;
 
 import java.util.*;
 
@@ -36,7 +36,7 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
 
     private final ConnectionService connectionService;
 
-    private final UserService userService;
+    private final IUserService userService;
 
     private final ComboBox<String> typeField = new ComboBox<>("Тип БД", Arrays.asList("MSSQL", "ORACLE", "MYSQL", "POSTGRESQL", "H2"));
 
@@ -58,7 +58,7 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
 
     private Registration saveListener;
 
-    public ConnectionUpsertView(final ConnectionService connectionService, final UserService userService) {
+    public ConnectionUpsertView(final ConnectionService connectionService, final IUserService userService) {
         this.connectionService = connectionService;
         this.userService = userService;
     }

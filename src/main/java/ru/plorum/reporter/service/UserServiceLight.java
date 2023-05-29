@@ -2,7 +2,6 @@ package ru.plorum.reporter.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -16,10 +15,10 @@ import ru.plorum.reporter.repository.UserRepository;
 import java.util.*;
 
 @Service
+@Profile({"free", "professional"})
 @Transactional
 @AllArgsConstructor
-@Profile({"business", "corporative"})
-public class UserService implements IUserService {
+public class UserServiceLight implements IUserService {
 
     private final UserRepository userRepository;
 
@@ -88,9 +87,7 @@ public class UserService implements IUserService {
 
     @Override
     public User getAuthenticatedUser() {
-        final var login = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (!StringUtils.hasText(login)) return null;
-        return userRepository.findByLogin(login).orElse(null);
+        return userRepository.findByLogin("admin").orElse(null);
     }
 
     @Override

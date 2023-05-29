@@ -14,8 +14,8 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.model.User;
+import ru.plorum.reporter.service.IUserService;
 import ru.plorum.reporter.service.MailService;
-import ru.plorum.reporter.service.UserService;
 import ru.plorum.reporter.util.LoginGenerator;
 import ru.plorum.reporter.util.PasswordGenerator;
 
@@ -28,7 +28,7 @@ import java.util.UUID;
 @PageTitle("Регистрация")
 public class RegisterUserView extends VerticalLayout {
 
-    public RegisterUserView(final UserService userService, final MailService mailService) {
+    public RegisterUserView(final IUserService userService, final MailService mailService) {
         setSizeFull();
         setJustifyContentMode(JustifyContentMode.CENTER);
         setAlignItems(Alignment.CENTER);

@@ -30,7 +30,7 @@ import static ru.plorum.reporter.util.Constants.*;
 @Route(value = "report/upsert", layout = MainView.class)
 public class ReportUpsertView extends AbstractView implements HasUrlParameter<String> {
 
-    private final UserService userService;
+    private final IUserService userService;
 
     private final ConnectionService connectionService;
 
@@ -53,7 +53,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
     private final DatePicker.DatePickerI18n i18n;
 
     public ReportUpsertView(
-            final UserService userService,
+            final IUserService userService,
             final ConnectionService connectionService,
             final UserGroupService userGroupService,
             final ReportService reportService,
@@ -157,7 +157,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
             final SourceTabContent sourceTabContent,
             final SecurityTabContent securityTabContent,
             final ReportGroupService reportGroupService,
-            final UserService userService,
+            final IUserService userService,
             final ConnectionService connectionService,
             final UserGroupService userGroupService
     ) {

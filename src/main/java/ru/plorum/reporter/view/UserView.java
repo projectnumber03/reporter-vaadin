@@ -25,7 +25,7 @@ import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.model.User;
-import ru.plorum.reporter.service.UserService;
+import ru.plorum.reporter.service.IUserService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -41,11 +41,11 @@ import static ru.plorum.reporter.util.Constants.USERS;
 @Route(value = "users", layout = MainView.class)
 public class UserView extends AbstractView {
 
-    final UserService userService;
+    final IUserService userService;
     final PaginatedGrid<User> userTable;
 
     public UserView(
-            final UserService userService
+            final IUserService userService
     ) {
         this.userService = userService;
         this.userTable = createUserTable();

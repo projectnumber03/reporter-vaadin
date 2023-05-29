@@ -36,7 +36,7 @@ public class ReportService {
 
     private final ReportRepository repository;
 
-    private final UserService userService;
+    private final IUserService userService;
 
     private final ConnectionService connectionService;
 

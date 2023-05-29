@@ -78,11 +78,11 @@ public class SettingsView extends AbstractView {
                     t.setInn(inn.getValue());
                     innRepository.save(t);
                 }, () -> innRepository.save(new Inn(inn.getValue())));
-                final Notification notification = Notification.show(SUCCESS);
+                final var notification = Notification.show(SUCCESS);
                 notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 notification.setPosition(Notification.Position.TOP_CENTER);
             } catch (Exception e) {
-                final Notification notification = Notification.show("Ошибка");
+                final var notification = Notification.show("Ошибка");
                 notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
                 notification.setPosition(Notification.Position.TOP_CENTER);
             }

@@ -40,7 +40,7 @@ public class ReportGroupService {
         reportGroup.setDescription(reportGroupTabContent.getDescriptionField().getValue());
         final var securityTabContent = (SecurityTabContent) content.get(SECURITY);
         reportGroup.setVisible(securityTabContent.getReportVisibilityRadioButtonGroup().getValue().getValue());
-        final User authenticatedUser = userService.getAuthenticatedUser();
+        final var authenticatedUser = userService.getAuthenticatedUser();
         switch (securityTabContent.getReportVisibilityRadioButtonGroup().getValue()) {
             case ME -> reportGroup.getPermittedUsers().add(authenticatedUser);
             case MY_GROUP ->
@@ -54,7 +54,7 @@ public class ReportGroupService {
     }
 
     public List<ReportGroup> findMy() {
-        final User user = userService.getAuthenticatedUser();
+        final var user = userService.getAuthenticatedUser();
         if (user.isAdmin()) {
             return repository.findAll();
         }

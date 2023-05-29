@@ -78,6 +78,7 @@ public class ReportService {
         report.setConnection(connection);
         report.getQueries().clear();
         final Consumer<Query> queryAction = q -> {
+            q.setId(UUID.randomUUID());
             q.setSqlText(q.getSqlTextField().getValue());
             q.setReport(q.getGenerateReportCheckbox().getValue());
             q.setSubReport(q.getSubReportField().getValue());
@@ -172,7 +173,7 @@ public class ReportService {
             });
             if (!showNotification) return;
             ui.access(() -> {
-                final Notification notification = Notification.show(SUCCESS);
+                final var notification = Notification.show(SUCCESS);
                 notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 notification.setPosition(Notification.Position.TOP_CENTER);
             });
@@ -180,7 +181,7 @@ public class ReportService {
             log.error("error generating report", e);
             if (!showNotification) return;
             ui.access(() -> {
-                final Notification notification = Notification.show("Ошибка формирования отчёта");
+                final var notification = Notification.show("Ошибка формирования отчёта");
                 notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
                 notification.setPosition(Notification.Position.TOP_CENTER);
             });

@@ -70,7 +70,6 @@ public class UserView extends AbstractView {
         grid.addColumn(createEditButtonRenderer()).setHeader("Пользователь");
         grid.addColumn(User::getName).setHeader("ФИО");
         grid.addColumn(User::getEmail).setHeader("Email");
-        grid.addColumn(User::getLogin).setHeader("Логин");
         grid.addColumn(u -> u.getRoles().stream().map(Role::getName).collect(Collectors.joining(", "))).setHeader("Роли");
         grid.addColumn(user -> DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(user.getCreatedOn())).setHeader("Создан");
         grid.addColumn(new ComponentRenderer<>(u -> {

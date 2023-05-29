@@ -1,17 +1,18 @@
 package ru.plorum.reporter.component;
 
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.model.Privilege;
 import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.repository.PrivilegeRepository;
 import ru.plorum.reporter.repository.RoleRepository;
 import ru.plorum.reporter.repository.UserRepository;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -24,6 +25,9 @@ public class SetupDataLoader {
     private final PrivilegeRepository privilegeRepository;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
     @Value("${administrator.login}")
     private String login;
 
@@ -53,7 +57,7 @@ public class SetupDataLoader {
         user.setId(UUID.randomUUID());
         user.setLogin(login);
         user.setName(login);
-        user.setPassword(password);
+        user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Collections.singleton(createAdminRoleIfNotFound(privileges)));
         user.setCreatedOn(LocalDateTime.now());
         user.setActive(true);

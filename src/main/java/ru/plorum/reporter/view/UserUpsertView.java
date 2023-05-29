@@ -109,7 +109,7 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
         saveListener = saveButton.addClickListener(e -> {
             if (!validate()) return;
             saveUser(new User(UUID.randomUUID()));
-            saveButton.getUI().ifPresent(ui -> ui.navigate("groups"));
+            saveButton.getUI().ifPresent(ui -> ui.navigate("users"));
         });
         return saveButton;
     }

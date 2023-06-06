@@ -12,7 +12,9 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
+import ru.plorum.reporter.component.ErrorNotification;
 import ru.plorum.reporter.model.connection.*;
 import ru.plorum.reporter.service.ConnectionService;
 import ru.plorum.reporter.service.IUserService;
@@ -58,6 +60,9 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
 
     private Registration saveListener;
 
+    @Value("${amount.sources}")
+    private Integer sourceAmount;
+
     public ConnectionUpsertView(final ConnectionService connectionService, final IUserService userService) {
         this.connectionService = connectionService;
         this.userService = userService;
@@ -76,6 +81,11 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
 
     private Button createSaveButton() {
         saveListener = saveButton.addClickListener(e -> {
+            if (!validate()) return;
+            if (connectionService.countAll() >= sourceAmount) {
+                new ErrorNotification("На Вашем тарифном плане установлено ограничение на количество подключений!");
+                return;
+            }
             saveConnection(UUID.randomUUID());
             saveButton.getUI().ifPresent(ui -> ui.navigate("connections"));
         });
@@ -145,6 +155,10 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
         saveListener.remove();
         saveListener = saveButton.addClickListener(e -> {
             if (!validate()) return;
+            if (connectionService.countAll() >= sourceAmount) {
+                new ErrorNotification("На Вашем тарифном плане установлено ограничение на количество подключений!");
+                return;
+            }
             saveConnection(connection.get().getId());
             saveButton.getUI().ifPresent(ui -> ui.navigate("connections"));
         });

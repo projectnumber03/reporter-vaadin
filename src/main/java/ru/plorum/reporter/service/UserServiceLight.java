@@ -99,4 +99,9 @@ public class UserServiceLight implements IUserService {
                 .anyMatch(Arrays.asList("REPORT_CREATE_PRIVILEGE", "REPORT_EDIT_PRIVILEGE")::contains);
     }
 
+    @Override
+    public Long countAll() {
+        return userRepository.countAll();
+    }
+
 }

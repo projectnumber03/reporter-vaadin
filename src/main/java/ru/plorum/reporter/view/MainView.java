@@ -2,6 +2,7 @@ package ru.plorum.reporter.view;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -22,6 +23,7 @@ import com.vaadin.flow.server.VaadinSession;
 import lombok.Getter;
 import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.service.IUserService;
+import ru.plorum.reporter.service.LicenseService;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,7 +38,8 @@ public class MainView extends AppLayout {
     @Getter
     private final H3 viewTitle = new H3();
 
-    public MainView(final IUserService userService) {
+    public MainView(final IUserService userService, final LicenseService licenseService) {
+        licenseService.setUi(UI.getCurrent());
         this.userService = userService;
         final var toggle = new DrawerToggle();
         final var title = new H1("Reporter");

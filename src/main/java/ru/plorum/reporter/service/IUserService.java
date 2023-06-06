@@ -34,4 +34,7 @@ public interface IUserService {
     User getAuthenticatedUser();
 
     boolean isManager();
+
+    Long countAll();
+
 }

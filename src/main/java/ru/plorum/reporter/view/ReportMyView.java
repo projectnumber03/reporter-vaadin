@@ -12,12 +12,14 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import ru.plorum.reporter.component.ReportTableContextMenu;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.Report;
 import ru.plorum.reporter.model.ReportGroup;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.service.ReportGroupService;
+import ru.plorum.reporter.service.ReportOutputService;
 import ru.plorum.reporter.service.ReportService;
 
 import java.util.List;
@@ -35,12 +37,25 @@ public class ReportMyView extends AbstractView {
     @Getter
     private final ReportService reportService;
 
+    private final ReportOutputService reportOutputService;
+
     private final ReportGroupService reportGroupService;
 
     private final PaginatedGrid<Report> reportTable;
 
-    public ReportMyView(final ReportService reportService, final ReportGroupService reportGroupService) {
+    @Value("${amount.reports}")
+    private Integer reportAmount;
+
+    @Value("${amount.generations}")
+    private Integer generationAmount;
+
+    public ReportMyView(
+            final ReportService reportService,
+            final ReportOutputService reportOutputService,
+            final ReportGroupService reportGroupService
+    ) {
         this.reportService = reportService;
+        this.reportOutputService = reportOutputService;
         this.reportGroupService = reportGroupService;
         this.reportTable = createReportTable();
     }
@@ -68,12 +83,22 @@ public class ReportMyView extends AbstractView {
 
             @Override
             public List<Report> getReports() {
-                return reportService.findMy();
+                return ReportMyView.this.getReports();
             }
 
             @Override
             public QueryParameters getQueryParameters(final Report report) {
                 return ReportMyView.this.getQueryParameters(report);
+            }
+
+            @Override
+            public boolean reportAmountCheck() {
+                return reportService.countAll() < reportAmount;
+            }
+
+            @Override
+            public boolean reportGenerationAmountCheck() {
+                return reportOutputService.countAll() < generationAmount;
             }
 
         };

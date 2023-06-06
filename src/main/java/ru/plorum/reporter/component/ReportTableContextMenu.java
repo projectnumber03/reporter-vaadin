@@ -26,6 +26,10 @@ public abstract class ReportTableContextMenu extends GridContextMenu<Report> {
         final var makeMenuItem = addItem(MAKE);
         makeMenuItem.addComponentAsFirst(VaadinIcon.REFRESH.create());
         makeMenuItem.addMenuItemClickListener(event -> {
+            if (!reportGenerationAmountCheck()) {
+                new ErrorNotification("На Вашем тарифном плане установлено ограничение на количество формирований отчётов!");
+                return;
+            }
             final var report = event.getItem();
             if (report.isEmpty()) return;
             if (CollectionUtils.isEmpty(report.get().getParameters())) {
@@ -39,6 +43,10 @@ public abstract class ReportTableContextMenu extends GridContextMenu<Report> {
         reportOutputsMenuItem.addMenuItemClickListener(e -> e.getItem().ifPresent(report -> reportOutputsMenuItem.getUI().ifPresent(ui -> ui.navigate("report_outputs/" + report.getId()))));
 
         addItem(COPY, e -> e.getItem().ifPresent(report -> {
+            if (!reportAmountCheck()) {
+                new ErrorNotification("На Вашем тарифном плане установлено ограничение на количество отчётов!");
+                return;
+            }
             final Report reportToClone = reportService.findById(report.getId());
             Optional.ofNullable(reportToClone).ifPresent(r -> {
                 reportService.clone(r);
@@ -81,5 +89,9 @@ public abstract class ReportTableContextMenu extends GridContextMenu<Report> {
     public abstract List<Report> getReports();
 
     public abstract QueryParameters getQueryParameters(final Report report);
+
+    public abstract boolean reportAmountCheck();
+
+    public abstract boolean reportGenerationAmountCheck();
 
 }

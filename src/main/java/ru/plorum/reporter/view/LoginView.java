@@ -1,6 +1,7 @@
 package ru.plorum.reporter.view;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
@@ -10,14 +11,19 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import jakarta.annotation.PostConstruct;
+import ru.plorum.reporter.service.LicenseService;
 
 @Route("login")
 @PageTitle("Вход | Reporter")
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
+    private final LicenseService licenseService;
+
     private final LoginForm loginForm = new LoginForm();
 
-    public LoginView() {
+    public LoginView(final LicenseService licenseService) {
+        this.licenseService = licenseService;
         loginForm.setI18n(createI18n());
         loginForm.setAction("login");
         loginForm.setForgotPasswordButtonVisible(false);
@@ -26,6 +32,11 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         setJustifyContentMode(JustifyContentMode.CENTER);
         setAlignItems(Alignment.CENTER);
         add(new H1("Reporter"), loginForm, createSignupButton());
+    }
+
+    @PostConstruct
+    protected void initialize() {
+        licenseService.setUi(UI.getCurrent());
     }
 
     private LoginI18n createI18n() {

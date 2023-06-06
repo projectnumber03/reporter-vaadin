@@ -11,6 +11,7 @@ import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.*;
 import ru.plorum.reporter.model.Report;
@@ -51,6 +52,9 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
     private final AtomicReference<Report> currentReport = new AtomicReference<>(new Report());
 
     private final DatePicker.DatePickerI18n i18n;
+
+    @Value("${amount.reports}")
+    private Integer reportAmount;
 
     public ReportUpsertView(
             final IUserService userService,
@@ -119,6 +123,10 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
     private Component createSaveButton() {
         saveButton.addClickListener(event -> {
             try {
+                if (reportService.countAll() >= reportAmount) {
+                    new ErrorNotification("На Вашем тарифном плане установлено ограничение на количество отчётов!");
+                    return;
+                }
                 final var report = reportService.saveFromContent(currentReport.get(), content);
                 reportSchedulerService.saveFromContent(report, content);
                 saveButton.getUI().ifPresent(ui -> ui.navigate("my_reports"));

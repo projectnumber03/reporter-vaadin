@@ -86,4 +86,8 @@ public class ConnectionService {
         }
     }
 
+    public Long countAll() {
+        return connectionRepository.countAll();
+    }
+
 }

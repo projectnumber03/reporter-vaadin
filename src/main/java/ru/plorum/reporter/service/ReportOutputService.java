@@ -38,4 +38,8 @@ public class ReportOutputService {
                 .map(Optional::get);
     }
 
+    public Long countAll() {
+        return reportOutputRepository.getMaxByDate();
+    }
+
 }

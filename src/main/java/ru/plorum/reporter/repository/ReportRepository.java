@@ -20,4 +20,7 @@ public interface ReportRepository extends JpaRepository<Report, UUID> {
 
     List<Report> findAllBySchedulerTaskIsNotNull();
 
+    @Query("select count(r) from Report as r")
+    Long countAll();
+
 }

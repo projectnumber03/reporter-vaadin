@@ -17,4 +17,8 @@ public class RoleService {
         return roleRepository.findAll();
     }
 
+    public Long countAll() {
+        return roleRepository.countAll();
+    }
+
 }

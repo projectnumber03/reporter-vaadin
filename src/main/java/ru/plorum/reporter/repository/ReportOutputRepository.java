@@ -19,4 +19,7 @@ public interface ReportOutputRepository extends JpaRepository<ReportOutput, UUID
 
     ReportOutput findFirstByReportOrderByCreatedAtDesc(final Report report);
 
+    @Query(value = "select max(count) from (select cast(CREATED_AT as date), count(*) as count from REPORT_OUTPUT group by cast(CREATED_AT as date))", nativeQuery = true)
+    Long getMaxByDate();
+
 }

@@ -102,4 +102,8 @@ public class UserService implements IUserService {
                 .anyMatch(Arrays.asList("REPORT_CREATE_PRIVILEGE", "REPORT_EDIT_PRIVILEGE")::contains);
     }
 
+    public Long countAll() {
+        return userRepository.countAll();
+    }
+
 }

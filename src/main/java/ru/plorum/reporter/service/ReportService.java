@@ -193,4 +193,8 @@ public class ReportService {
         save(clone);
     }
 
+    public Long countAll() {
+        return repository.countAll();
+    }
+
 }

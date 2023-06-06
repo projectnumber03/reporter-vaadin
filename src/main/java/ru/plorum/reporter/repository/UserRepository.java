@@ -32,4 +32,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     List<User> findAllByGroup(final UserGroup group);
 
+    @Query("select count(u) from User as u")
+    Long countAll();
+
 }

@@ -16,10 +16,12 @@ import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import ru.plorum.reporter.component.ErrorNotification;
 import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.model.UserGroup;
@@ -72,6 +74,9 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
 
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${amount.users}")
+    private Integer userAmount;
+
     @Override
     @PostConstruct
     protected void initialize() {
@@ -108,6 +113,10 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
     private Button createSaveButton() {
         saveListener = saveButton.addClickListener(e -> {
             if (!validate()) return;
+            if (userService.countAll() >= userAmount) {
+                new ErrorNotification("На Вашем тарифном плане установлено ограничение на количество пользователей!");
+                return;
+            }
             saveUser(new User(UUID.randomUUID()));
             saveButton.getUI().ifPresent(ui -> ui.navigate("users"));
         });
@@ -146,6 +155,10 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
         saveListener.remove();
         saveListener = saveButton.addClickListener(e -> {
             if (!validate()) return;
+            if (userService.countAll() >= userAmount) {
+                new ErrorNotification("На Вашем тарифном плане установлено ограничение на количество пользователей!");
+                return;
+            }
             saveUser(user.get());
             saveButton.getUI().ifPresent(ui -> ui.navigate("users"));
         });

@@ -39,7 +39,7 @@ public class ReportOutputService {
     }
 
     public Long countAll() {
-        return reportOutputRepository.getMaxByDate();
+        return Optional.ofNullable(reportOutputRepository.getMaxByDate()).orElse(0L);
     }
 
 }

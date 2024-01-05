@@ -9,14 +9,16 @@ import ru.plorum.reporter.model.UserPrincipal;
 
 @Service
 @AllArgsConstructor
-public class DatabaseUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final IUserService userService;
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         final var user = userService.findByLogin(username);
-        if (user.isEmpty()) throw new UsernameNotFoundException(username);
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException(username);
+        }
         return new UserPrincipal(user.get());
     }
 

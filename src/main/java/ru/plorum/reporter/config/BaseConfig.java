@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import oshi.SystemInfo;
 
+import java.net.http.HttpClient;
 import java.util.List;
 
 @Configuration
@@ -38,6 +39,11 @@ public class BaseConfig {
                 .getProcessor()
                 .getProcessorIdentifier()
                 .getProcessorID();
+    }
+
+    @Bean
+    public HttpClient httpClient() {
+        return HttpClient.newHttpClient();
     }
 
 }

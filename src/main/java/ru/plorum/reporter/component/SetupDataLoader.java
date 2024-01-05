@@ -51,7 +51,7 @@ public class SetupDataLoader {
     }
 
     @Transactional
-    protected void createAdminIfNotFound(final Set<Privilege> privileges) {
+    public void createAdminIfNotFound(final Set<Privilege> privileges) {
         final List<User> users = userRepository.findByLoginLike(login);
         final User user = CollectionUtils.isEmpty(users) ? new User() : users.iterator().next();
         user.setId(UUID.randomUUID());
@@ -65,7 +65,7 @@ public class SetupDataLoader {
     }
 
     @Transactional
-    protected Role createAdminRoleIfNotFound(final Set<Privilege> privileges) {
+    public Role createAdminRoleIfNotFound(final Set<Privilege> privileges) {
         final String name = "ROLE_ADMIN";
         final Role role = roleRepository.findByName(name);
         if (Objects.nonNull(role)) return role;
@@ -77,7 +77,7 @@ public class SetupDataLoader {
     }
 
     @Transactional
-    protected Privilege createPrivilegeIfNotFound(final Map.Entry<String, String> data) {
+    public Privilege createPrivilegeIfNotFound(final Map.Entry<String, String> data) {
         final Privilege privilege = privilegeRepository.findByName(data.getKey());
         if (Objects.nonNull(privilege)) return privilege;
         final Privilege privilegeToCreate = new Privilege();

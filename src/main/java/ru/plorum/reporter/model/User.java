@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Accessors(chain = true)
 @Table(name = "USER_TABLE")
 @FieldDefaults(level = AccessLevel.PRIVATE)

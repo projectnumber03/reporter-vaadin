@@ -29,6 +29,10 @@ public class ReportOutputService {
         return reportOutputRepository.findAllByReportOrderByCreatedAtDesc(report);
     }
 
+    public void deleteByReport(final Report report) {
+        reportOutputRepository.deleteAll(findByReport(report));
+    }
+
     public Optional<ReportOutput> findFirstByReport(final Report report) {
         if (Objects.isNull(report)) return Optional.empty();
         return Optional.ofNullable(reportOutputRepository.findFirstByReportOrderByCreatedAtDesc(report))

@@ -26,7 +26,7 @@ public class ConnectionService {
 
     ConnectionRepository connectionRepository;
 
-    @Qualifier("connectionEncoder")
+    @Qualifier("jasyptEncryptor")
     AES256TextEncryptor encryptor;
 
     public List<Connection> findById() {

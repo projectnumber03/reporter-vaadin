@@ -119,6 +119,7 @@ public class ReportService {
 
     public void delete(final Report report) {
         if (Objects.isNull(report)) return;
+        reportOutputService.deleteByReport(report);
         repository.delete(report);
     }
 

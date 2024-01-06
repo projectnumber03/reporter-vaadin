@@ -12,18 +12,25 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.PostConstruct;
+import ru.plorum.reporter.component.SetupDataLoader;
 import ru.plorum.reporter.service.LicenseService;
 
 @Route("login")
 @PageTitle("Вход | Reporter")
-public class LoginView extends VerticalLayout implements BeforeEnterObserver {
+public class LoginView extends VerticalLayout implements BeforeEnterObserver/*, ComponentEventListener<AbstractLogin.LoginEvent>*/ {
 
     private final LicenseService licenseService;
 
+    private final SetupDataLoader setupDataLoader;
+
     private final LoginForm loginForm = new LoginForm();
 
-    public LoginView(final LicenseService licenseService) {
+    public LoginView(
+            final LicenseService licenseService,
+            final SetupDataLoader setupDataLoader
+    ) {
         this.licenseService = licenseService;
+        this.setupDataLoader = setupDataLoader;
         loginForm.setI18n(createI18n());
         loginForm.setAction("login");
         loginForm.setForgotPasswordButtonVisible(false);
@@ -71,5 +78,19 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         if (!error) return;
         loginForm.setError(true);
     }
+
+   /* @Override
+    public void onComponentEvent(final AbstractLogin.LoginEvent loginEvent) {
+        final var authenticated = SecurityUtils.authenticate(loginEvent.getUsername(), loginEvent.getPassword());
+        if (!authenticated) {
+            loginForm.setError(true);
+            return;
+        }
+        if (setupDataLoader.getLicenseCache().getActive().isEmpty()) {
+            UI.getCurrent().navigate(LicenseSelectView.class);
+            return;
+        }
+        UI.getCurrent().getPage().setLocation(SecurityUtils.LOGIN_SUCCESS_URL);
+    }*/
 
 }

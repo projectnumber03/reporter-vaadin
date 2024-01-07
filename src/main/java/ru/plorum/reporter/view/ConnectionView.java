@@ -11,12 +11,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableBiConsumer;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import ru.plorum.reporter.component.ConfirmationDialog;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.User;
@@ -31,14 +30,20 @@ import static ru.plorum.reporter.util.Constants.*;
 @PageTitle(CONNECTIONS)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "connections", layout = MainView.class)
-public class ConnectionView extends AbstractView {
+public class ConnectionView extends AbstractView implements BeforeEnterObserver {
 
     private final PaginatedGrid<Connection> connectionTable;
 
     private final ConnectionService connectionService;
 
-    public ConnectionView(final ConnectionService connectionService) {
+    private final LicenseCache licenseCache;
+
+    public ConnectionView(
+            final ConnectionService connectionService,
+            final LicenseCache licenseCache
+    ) {
         this.connectionService = connectionService;
+        this.licenseCache = licenseCache;
         this.connectionTable = createConnectionTable();
     }
 
@@ -96,6 +101,13 @@ public class ConnectionView extends AbstractView {
 
     private QueryParameters getQueryParameters(final Connection connection) {
         return QueryParameters.simple(Map.of("id", connection.getId().toString(), "name", connection.getDescription()));
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

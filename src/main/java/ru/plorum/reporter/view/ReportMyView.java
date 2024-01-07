@@ -5,14 +5,13 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableBiConsumer;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.component.ReportTableContextMenu;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.Report;
@@ -32,7 +31,7 @@ import static ru.plorum.reporter.util.Constants.*;
 @PageTitle(MY_REPORTS)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "my_reports", layout = MainView.class)
-public class ReportMyView extends AbstractView {
+public class ReportMyView extends AbstractView implements BeforeEnterObserver {
 
     @Getter
     private final ReportService reportService;
@@ -40,6 +39,8 @@ public class ReportMyView extends AbstractView {
     private final ReportOutputService reportOutputService;
 
     private final ReportGroupService reportGroupService;
+
+    private final LicenseCache licenseCache;
 
     private final PaginatedGrid<Report> reportTable;
 
@@ -52,11 +53,13 @@ public class ReportMyView extends AbstractView {
     public ReportMyView(
             final ReportService reportService,
             final ReportOutputService reportOutputService,
-            final ReportGroupService reportGroupService
+            final ReportGroupService reportGroupService,
+            final LicenseCache licenseCache
     ) {
         this.reportService = reportService;
         this.reportOutputService = reportOutputService;
         this.reportGroupService = reportGroupService;
+        this.licenseCache = licenseCache;
         this.reportTable = createReportTable();
     }
 
@@ -124,6 +127,13 @@ public class ReportMyView extends AbstractView {
 
     protected List<Report> getReports() {
         return reportService.findMy();
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

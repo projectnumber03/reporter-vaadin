@@ -48,14 +48,13 @@ public class SetupDataLoader {
 
     private final String systemId;
 
+    private final TariffInfo tariffInfo;
+
     @Getter
     private final LicenseCache licenseCache;
 
     @Value("${api.user.details}")
     private String apiUrl;
-
-    @Value("${tariff.id}")
-    private String tariffId;
 
     @PostConstruct
     protected void initialize() {
@@ -83,7 +82,7 @@ public class SetupDataLoader {
             final var requestUserDetailsDto = UserDetailsDto.builder()
                     .login(login)
                     .password(password)
-                    .tariffId(tariffId)
+                    .tariffId(tariffInfo.getTariffId())
                     .systemId(systemId)
                     .build();
             final var request = HttpRequest.newBuilder()

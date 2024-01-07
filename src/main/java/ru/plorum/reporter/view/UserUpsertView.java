@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import ru.plorum.reporter.component.ErrorNotification;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.model.UserGroup;
@@ -42,7 +43,7 @@ import static ru.plorum.reporter.util.Constants.*;
 @RequiredArgsConstructor
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "users/upsert", layout = MainView.class)
-public class UserUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable {
+public class UserUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable, BeforeEnterObserver {
 
     private final TextField fioField = new TextField("ФИО");
 
@@ -73,6 +74,8 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
     private final UserGroupService userGroupService;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final LicenseCache licenseCache;
 
     @Value("${amount.users}")
     private Integer userAmount;
@@ -181,6 +184,13 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
             return login.split("_")[0] + "_" + (Long.parseLong(login.split("_")[1]) + 1);
         }
         return login + "_1";
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

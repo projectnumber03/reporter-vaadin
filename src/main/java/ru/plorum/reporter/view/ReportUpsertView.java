@@ -29,7 +29,7 @@ import static ru.plorum.reporter.util.Constants.*;
 @PageTitle(REPORT)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report/upsert", layout = MainView.class)
-public class ReportUpsertView extends AbstractView implements HasUrlParameter<String> {
+public class ReportUpsertView extends AbstractView implements HasUrlParameter<String>, BeforeEnterObserver {
 
     private final IUserService userService;
 
@@ -42,6 +42,8 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
     private final ReportGroupService reportGroupService;
 
     private final ReportSchedulerService reportSchedulerService;
+
+    private final LicenseCache licenseCache;
 
     private final TabSheet tabSheet = new TabSheet();
 
@@ -63,6 +65,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
             final ReportService reportService,
             final ReportGroupService reportGroupService,
             final ReportSchedulerService reportSchedulerService,
+            final LicenseCache licenseCache,
             final DatePicker.DatePickerI18n i18n
     ) {
         this.userService = userService;
@@ -71,6 +74,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
         this.reportService = reportService;
         this.reportGroupService = reportGroupService;
         this.reportSchedulerService = reportSchedulerService;
+        this.licenseCache = licenseCache;
         this.i18n = i18n;
     }
 
@@ -252,6 +256,13 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
             schedulerTabContent.getDaySelectField().setReadOnly(false);
             schedulerTabContent.getIntervalSelectField().clear();
             schedulerTabContent.getIntervalSelectField().setReadOnly(true);
+        }
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
         }
     }
 

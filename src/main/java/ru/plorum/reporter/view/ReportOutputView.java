@@ -2,12 +2,10 @@ package ru.plorum.reporter.view;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.Report;
 import ru.plorum.reporter.model.ReportOutput;
@@ -25,20 +23,24 @@ import static ru.plorum.reporter.util.Constants.*;
 @PageTitle(REPORT_OUTPUTS)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report_outputs", layout = MainView.class)
-public class ReportOutputView extends AbstractView implements HasUrlParameter<String> {
+public class ReportOutputView extends AbstractView implements HasUrlParameter<String>, BeforeEnterObserver {
 
     private final ReportOutputService reportOutputService;
 
     private final ReportService reportService;
 
+    private final LicenseCache licenseCache;
+
     private final PaginatedGrid<ReportOutput> reportOutputTable;
 
     public ReportOutputView(
             final ReportOutputService reportOutputService,
-            final ReportService reportService
+            final ReportService reportService,
+            final LicenseCache licenseCache
     ) {
         this.reportOutputService = reportOutputService;
         this.reportService = reportService;
+        this.licenseCache = licenseCache;
         this.reportOutputTable = createReportOutputTable();
     }
 
@@ -69,6 +71,13 @@ public class ReportOutputView extends AbstractView implements HasUrlParameter<St
         if (Objects.isNull(report)) return;
         final var reportOutputs = reportOutputService.findByReport(report);
         reportOutputTable.setItems(reportOutputs);
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

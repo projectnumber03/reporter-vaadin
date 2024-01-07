@@ -12,6 +12,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.model.UserGroup;
 import ru.plorum.reporter.service.UserGroupService;
 
@@ -23,7 +24,7 @@ import static ru.plorum.reporter.util.Constants.*;
 @PageTitle(USER_GROUP)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "groups/upsert", layout = MainView.class)
-public class UserGroupUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable {
+public class UserGroupUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable, BeforeEnterObserver {
 
     private final TextField nameField = new TextField(NAME);
 
@@ -37,8 +38,14 @@ public class UserGroupUpsertView extends AbstractView implements HasUrlParameter
 
     private final UserGroupService userGroupService;
 
-    public UserGroupUpsertView(final UserGroupService userGroupService) {
+    private final LicenseCache licenseCache;
+
+    public UserGroupUpsertView(
+            final UserGroupService userGroupService,
+            final LicenseCache licenseCache
+    ) {
         this.userGroupService = userGroupService;
+        this.licenseCache = licenseCache;
     }
 
     @Override
@@ -96,6 +103,13 @@ public class UserGroupUpsertView extends AbstractView implements HasUrlParameter
         final Binder<UserGroup> binder = new BeanValidationBinder<>(UserGroup.class);
         binder.forField(nameField).asRequired(REQUIRED_FIELD).bind(UserGroup::getName, UserGroup::setName);
         return binder.validate().isOk();
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

@@ -12,15 +12,14 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableBiConsumer;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.ConfirmationDialog;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.Role;
@@ -39,15 +38,20 @@ import static ru.plorum.reporter.util.Constants.USERS;
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @FieldDefaults(level = AccessLevel.PROTECTED)
 @Route(value = "users", layout = MainView.class)
-public class UserView extends AbstractView {
+public class UserView extends AbstractView implements BeforeEnterObserver {
 
     final IUserService userService;
+
+    final LicenseCache licenseCache;
+
     final PaginatedGrid<User> userTable;
 
     public UserView(
-            final IUserService userService
+            final IUserService userService,
+            final LicenseCache licenseCache
     ) {
         this.userService = userService;
+        this.licenseCache = licenseCache;
         this.userTable = createUserTable();
     }
 
@@ -158,6 +162,13 @@ public class UserView extends AbstractView {
         button.setText("Разблокировать");
         button.addClickListener(e -> new ConfirmationDialog(message, callback).open());
         return button;
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

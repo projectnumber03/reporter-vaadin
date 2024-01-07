@@ -9,6 +9,7 @@ import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.util.CollectionUtils;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.component.ReportGroupTabContent;
 import ru.plorum.reporter.component.SecurityTabContent;
 import ru.plorum.reporter.model.ReportGroup;
@@ -25,13 +26,15 @@ import static ru.plorum.reporter.util.Constants.*;
 @PageTitle(REPORT_GROUP)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report_groups/upsert", layout = MainView.class)
-public class ReportGroupUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable {
+public class ReportGroupUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable, BeforeEnterObserver {
 
     private final IUserService userService;
 
     private final UserGroupService userGroupService;
 
     private final ReportGroupService reportGroupService;
+
+    private final LicenseCache licenseCache;
 
     private final TabSheet tabSheet = new TabSheet();
 
@@ -42,11 +45,13 @@ public class ReportGroupUpsertView extends AbstractView implements HasUrlParamet
     public ReportGroupUpsertView(
             final IUserService userService,
             final UserGroupService userGroupService,
-            final ReportGroupService reportGroupService
+            final ReportGroupService reportGroupService,
+            final LicenseCache licenseCache
     ) {
         this.userService = userService;
         this.userGroupService = userGroupService;
         this.reportGroupService = reportGroupService;
+        this.licenseCache = licenseCache;
     }
 
     @Override
@@ -113,6 +118,13 @@ public class ReportGroupUpsertView extends AbstractView implements HasUrlParamet
         final var reportGroupTabContent = (ReportGroupTabContent) content.get(REPORT_GROUP);
         binder.forField(reportGroupTabContent.getNameField()).asRequired(REQUIRED_FIELD).bind(ReportGroup::getName, ReportGroup::setName);
         return binder.validate().isOk();
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

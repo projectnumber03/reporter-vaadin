@@ -10,6 +10,8 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
@@ -17,6 +19,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.jasypt.util.text.AES256TextEncryptor;
 import ru.plorum.reporter.VaadinApplication;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.model.Inn;
 import ru.plorum.reporter.repository.InnRepository;
 
@@ -28,13 +31,15 @@ import static ru.plorum.reporter.util.Constants.*;
 @PageTitle(SETTINGS)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "settings", layout = MainView.class)
-public class SettingsView extends AbstractView {
+public class SettingsView extends AbstractView implements BeforeEnterObserver {
 
     private final String systemId;
 
     private final InnRepository innRepository;
 
     private final AES256TextEncryptor encryptor;
+
+    private final LicenseCache licenseCache;
 
     private final TextField systemIdField = new TextField("Уникальный идентификатор системы");
 
@@ -49,11 +54,13 @@ public class SettingsView extends AbstractView {
     public SettingsView(
             final String systemId,
             final InnRepository innRepository,
-            final AES256TextEncryptor encryptor
+            final AES256TextEncryptor encryptor,
+            final LicenseCache licenseCache
     ) {
         this.systemId = systemId;
         this.innRepository = innRepository;
         this.encryptor = encryptor;
+        this.licenseCache = licenseCache;
     }
 
     @Override
@@ -126,6 +133,13 @@ public class SettingsView extends AbstractView {
         systemIdField.setWidth(315, Unit.PIXELS);
 
         return systemIdField;
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

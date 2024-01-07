@@ -10,6 +10,7 @@ import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.util.CollectionUtils;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.model.Parameter;
 import ru.plorum.reporter.model.Report;
 import ru.plorum.reporter.service.ReportService;
@@ -23,9 +24,11 @@ import static ru.plorum.reporter.util.Constants.REPORT_PARAMETERS;
 @PageTitle(REPORT_PARAMETERS)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report/parameters", layout = MainView.class)
-public class ReportParameterView extends AbstractView implements HasUrlParameter<String> {
+public class ReportParameterView extends AbstractView implements HasUrlParameter<String>, BeforeEnterObserver {
 
     private final ReportService reportService;
+
+    private final LicenseCache licenseCache;
 
     private final Button processButton = new Button("Продолжить");
 
@@ -41,9 +44,11 @@ public class ReportParameterView extends AbstractView implements HasUrlParameter
 
     public ReportParameterView(
             final ReportService reportService,
+            final LicenseCache licenseCache,
             final DatePicker.DatePickerI18n i18n
     ) {
         this.reportService = reportService;
+        this.licenseCache = licenseCache;
         this.i18n = i18n;
     }
 
@@ -104,6 +109,13 @@ public class ReportParameterView extends AbstractView implements HasUrlParameter
                 stringParameterFields.put(parameter.getName(), stringParameterField);
                 vertical.add(stringParameterField);
             }
+        }
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
         }
     }
 

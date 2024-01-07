@@ -11,13 +11,12 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableBiConsumer;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.apache.logging.log4j.util.Strings;
 import ru.plorum.reporter.component.ConfirmationDialog;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.UserGroup;
@@ -32,16 +31,20 @@ import static ru.plorum.reporter.util.Constants.*;
 @PageTitle(USER_GROUPS)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "groups", layout = MainView.class)
-public class UserGroupView extends AbstractView {
+public class UserGroupView extends AbstractView implements BeforeEnterObserver {
 
     private final UserGroupService userGroupService;
+
+    private final LicenseCache licenseCache;
 
     private final PaginatedGrid<UserGroup> userGroupTable;
 
     public UserGroupView(
-            final UserGroupService userGroupService
+            final UserGroupService userGroupService,
+            final LicenseCache licenseCache
     ) {
         this.userGroupService = userGroupService;
+        this.licenseCache = licenseCache;
         this.userGroupTable = createUserGroupTable();
     }
 
@@ -101,6 +104,13 @@ public class UserGroupView extends AbstractView {
             layout.add(button);
         };
         return new ComponentRenderer<>(HorizontalLayout::new, actionProcessor);
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

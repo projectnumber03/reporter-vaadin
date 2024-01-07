@@ -15,6 +15,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.ErrorNotification;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.model.connection.*;
 import ru.plorum.reporter.service.ConnectionService;
 import ru.plorum.reporter.service.IUserService;
@@ -26,9 +27,9 @@ import static ru.plorum.reporter.util.Constants.*;
 @PageTitle(CONNECTION)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "connections/upsert", layout = MainView.class)
-public class ConnectionUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable {
+public class ConnectionUpsertView extends AbstractView implements HasUrlParameter<String>, Validatable, BeforeEnterObserver {
 
-    private static final Map<String, Connection> connectionMapping = new HashMap<>(){{
+    private static final Map<String, Connection> connectionMapping = new HashMap<>() {{
         put("MSSQL", new MSSQLConnection());
         put("ORACLE", new OracleConnection());
         put("MYSQL", new MYSQLConnection());
@@ -39,6 +40,8 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
     private final ConnectionService connectionService;
 
     private final IUserService userService;
+
+    private final LicenseCache licenseCache;
 
     private final ComboBox<String> typeField = new ComboBox<>("Тип БД", Arrays.asList("MSSQL", "ORACLE", "MYSQL", "POSTGRESQL", "H2"));
 
@@ -63,9 +66,14 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
     @Value("${amount.sources}")
     private Integer sourceAmount;
 
-    public ConnectionUpsertView(final ConnectionService connectionService, final IUserService userService) {
+    public ConnectionUpsertView(
+            final ConnectionService connectionService,
+            final IUserService userService,
+            final LicenseCache licenseCache
+    ) {
         this.connectionService = connectionService;
         this.userService = userService;
+        this.licenseCache = licenseCache;
     }
 
     @Override
@@ -148,7 +156,7 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
         typeField.setValue(connection.get().getType());
         descriptionField.setValue(connection.get().getDescription());
         hostField.setValue(connection.get().getHost());
-        portField.setValue(connection.get().getPort() + "");
+        portField.setValue(String.valueOf(connection.get().getPort()));
         nameField.setValue(connection.get().getName());
         loginField.setValue(connection.get().getLogin());
         passwordField.setValue(connection.get().getPassword());
@@ -167,6 +175,13 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
     @Override
     public boolean validate() {
         return true;
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

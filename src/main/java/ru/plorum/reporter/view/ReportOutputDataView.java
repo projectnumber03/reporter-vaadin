@@ -14,16 +14,14 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.ChartFlow;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.ReportOutputData;
 import ru.plorum.reporter.service.PdfService;
@@ -42,13 +40,15 @@ import static ru.plorum.reporter.util.Constants.SUCCESS;
 @PageTitle(REPORT_OUTPUT)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report_output", layout = MainView.class)
-public class ReportOutputDataView extends AbstractView implements HasUrlParameter<String> {
+public class ReportOutputDataView extends AbstractView implements HasUrlParameter<String>, BeforeEnterObserver {
 
     private final ReportOutputService reportOutputService;
 
     private final PdfService pdfService;
 
     private final XlsxService xlsxService;
+
+    private final LicenseCache licenseCache;
 
     private final TabSheet tabSheet = new TabSheet();
 
@@ -67,11 +67,13 @@ public class ReportOutputDataView extends AbstractView implements HasUrlParamete
     public ReportOutputDataView(
             final ReportOutputService reportOutputService,
             final PdfService pdfService,
-            final XlsxService xlsxService
+            final XlsxService xlsxService,
+            final LicenseCache licenseCache
     ) {
         this.reportOutputService = reportOutputService;
         this.pdfService = pdfService;
         this.xlsxService = xlsxService;
+        this.licenseCache = licenseCache;
     }
 
     @Override
@@ -228,6 +230,13 @@ public class ReportOutputDataView extends AbstractView implements HasUrlParamete
             tabContent.put(tabText, v);
             tabSheet.add(tabText, createReportOutputDataTable(tabText, v));
         });
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

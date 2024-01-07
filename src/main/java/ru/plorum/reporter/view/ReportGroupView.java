@@ -7,11 +7,10 @@ import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableBiConsumer;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
+import ru.plorum.reporter.component.LicenseCache;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.ReportGroup;
@@ -25,14 +24,20 @@ import static ru.plorum.reporter.util.Constants.*;
 @PageTitle(REPORT_GROUPS)
 @RolesAllowed(value = {"ROLE_ADMIN"})
 @Route(value = "report_groups", layout = MainView.class)
-public class ReportGroupView extends AbstractView {
+public class ReportGroupView extends AbstractView implements BeforeEnterObserver {
 
     private final ReportGroupService reportGroupService;
 
+    private final LicenseCache licenseCache;
+
     private final PaginatedGrid<ReportGroup> reportGroupTable;
 
-    public ReportGroupView(final ReportGroupService reportGroupService) {
+    public ReportGroupView(
+            final ReportGroupService reportGroupService,
+            final LicenseCache licenseCache
+    ) {
         this.reportGroupService = reportGroupService;
+        this.licenseCache = licenseCache;
         this.reportGroupTable = createReportGroupTable();
     }
 
@@ -74,6 +79,13 @@ public class ReportGroupView extends AbstractView {
 
     private QueryParameters getQueryParameters(final ReportGroup reportGroup) {
         return QueryParameters.simple(Map.of("id", reportGroup.getId().toString()));
+    }
+
+    @Override
+    public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
+        if (licenseCache.getActive().isEmpty()) {
+            beforeEnterEvent.rerouteTo(IndexView.class);
+        }
     }
 
 }

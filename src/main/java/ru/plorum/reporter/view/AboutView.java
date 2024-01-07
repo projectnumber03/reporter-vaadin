@@ -53,9 +53,9 @@ public class AboutView extends AbstractView implements BeforeEnterObserver {
 
     @Override
     public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
-        /*if (licenseCache.getActive().isEmpty()) {
+        if (licenseCache.getActive().isEmpty()) {
             beforeEnterEvent.rerouteTo(IndexView.class);
-        }*/
+        }
     }
 
 }

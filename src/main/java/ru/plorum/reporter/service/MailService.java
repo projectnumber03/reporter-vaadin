@@ -50,25 +50,25 @@ public class MailService {
 
     public void sendInactive(final User user, final String password) {
         final var subject = "Регистрационные данные в системе Reports";
-        final var msg = String.format("Вы зарегистрированы в системе, Ваша учетная запись ожидает активации<br>Ваш логин: %s<br>Ваш пароль: %s<br><br><br><a href='http://%s'>%s</a>", user.getLogin(), password, domain, domain);
+        final var msg = String.format("Вы зарегистрированы в системе, Ваша учетная запись ожидает активации<br>Ваш логин: %s<br>Ваш пароль: %s<br><br><br><a href='%s'>%s</a>", user.getLogin(), password, domain, domain);
         sendMail(user, msg, subject);
     }
 
     public void sendActive(final User user) {
         final var subject = "Регистрационные данные в системе Reports";
-        final var msg = String.format("Вы зарегистрированы в системе<br>Ваш логин: %s<br>Ваш пароль: %s<br><br><br><a href='http://%s'>%s</a>", user.getLogin(), user.getPassword(), domain, domain);
+        final var msg = String.format("Вы зарегистрированы в системе<br>Ваш логин: %s<br>Ваш пароль: %s<br><br><br><a href='%s'>%s</a>", user.getLogin(), user.getPassword(), domain, domain);
         sendMail(user, msg, subject);
     }
 
     public void sendInvite(final User user) {
         final var subject = "Учетная запись активирована";
-        final var msg = String.format("Уважаемый (ая) %s, теперь Вы можете войти в систему Reports, используя учетные данные из предыдущего письма<br><br><br><a href='http://%s'>%s</a>", user.getName(), domain, domain);
+        final var msg = String.format("Уважаемый (ая) %s, теперь Вы можете войти в систему Reports, используя учетные данные из предыдущего письма<br><br><br><a href='%s'>%s</a>", user.getName(), domain, domain);
         sendMail(user, msg, subject);
     }
 
     public void sendChange(final User user) {
         final var subject = "Новые учетные данные в системе Reports";
-        final var msg = String.format("Уважаемый (ая) %s, Ваш пароль был изменен администратором системы. <br>Новые данные для входа: <br>Логин: %s <br>Пароль: %s<br><br><br><a href='http://%s'>%s</a>", user.getName(), user.getLogin(), user.getPassword(), domain, domain);
+        final var msg = String.format("Уважаемый (ая) %s, Ваш пароль был изменен администратором системы. <br>Новые данные для входа: <br>Логин: %s <br>Пароль: %s<br><br><br><a href='%s'>%s</a>", user.getName(), user.getLogin(), user.getPassword(), domain, domain);
         sendMail(user, msg, subject);
     }
 

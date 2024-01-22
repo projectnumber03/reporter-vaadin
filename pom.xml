@@ -134,6 +134,7 @@
 				</dependency>
 			</dependencies>
 			<build>
+				<finalName>${project.artifactId}-free-${project.version}</finalName>
 				<plugins>
 					<plugin>
 						<groupId>com.vaadin</groupId>
@@ -167,6 +168,7 @@
 				</dependency>
 			</dependencies>
 			<build>
+				<finalName>${project.artifactId}-professional-${project.version}</finalName>
 				<plugins>
 					<plugin>
 						<groupId>com.vaadin</groupId>
@@ -220,6 +222,7 @@
 				</dependency>
 			</dependencies>
 			<build>
+				<finalName>${project.artifactId}-business-${project.version}</finalName>
 				<plugins>
 					<plugin>
 						<groupId>com.vaadin</groupId>
@@ -273,6 +276,7 @@
 				</dependency>
 			</dependencies>
 			<build>
+				<finalName>${project.artifactId}-corporative-${project.version}</finalName>
 				<plugins>
 					<plugin>
 						<groupId>com.vaadin</groupId>

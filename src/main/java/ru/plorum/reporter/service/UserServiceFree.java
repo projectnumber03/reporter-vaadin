@@ -2,6 +2,7 @@ package ru.plorum.reporter.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -10,17 +11,22 @@ import ru.plorum.reporter.model.Privilege;
 import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.model.UserGroup;
+import ru.plorum.reporter.repository.RoleRepository;
 import ru.plorum.reporter.repository.UserRepository;
 
 import java.util.*;
 
 @Service
-@Profile({"free", "professional"})
+@Profile({"free"})
 @Transactional
 @AllArgsConstructor
-public class UserServiceLight implements IUserService {
+public class UserServiceFree implements IUserService {
 
     private final UserRepository userRepository;
+
+    private final RoleRepository roleRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> getAllActive() {
@@ -87,7 +93,16 @@ public class UserServiceLight implements IUserService {
 
     @Override
     public User getAuthenticatedUser() {
-        return userRepository.findByLogin("admin").orElse(null);
+        final var user = new User();
+        final var ADMIN = "admin";
+        user.setId(UUID.randomUUID());
+        user.setActive(true);
+        user.setName(ADMIN);
+        user.setEmail(ADMIN);
+        user.setPassword(passwordEncoder.encode(ADMIN));
+        Optional.ofNullable(roleRepository.findByName("ROLE_ADMIN")).map(Collections::singleton).ifPresent(user::setRoles);
+
+        return user;
     }
 
     @Override

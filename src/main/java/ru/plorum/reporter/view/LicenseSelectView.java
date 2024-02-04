@@ -13,7 +13,7 @@ import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.component.TariffInfo;
 import ru.plorum.reporter.model.License;
 
@@ -27,14 +27,14 @@ import static ru.plorum.reporter.util.Constants.DATE_FORMATTER;
 @PageTitle("Панель администратора")
 public class LicenseSelectView extends VerticalLayout {
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final RadioButtonGroup<License> licenseField = new RadioButtonGroup<>("Для активации продукта, выберите 1 из доступных лицензий");
 
     private final Button selectButton = new Button("Выбрать");
 
     public LicenseSelectView(
-            final LicenseCache licenseCache,
+            final ILicenseCache licenseCache,
             final TariffInfo tariffInfo
     ) {
         this.licenseCache = licenseCache;

@@ -5,7 +5,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.Report;
 import ru.plorum.reporter.model.ReportOutput;
@@ -29,14 +29,14 @@ public class ReportOutputView extends AbstractView implements HasUrlParameter<St
 
     private final ReportService reportService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final PaginatedGrid<ReportOutput> reportOutputTable;
 
     public ReportOutputView(
             final ReportOutputService reportOutputService,
             final ReportService reportService,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.reportOutputService = reportOutputService;
         this.reportService = reportService;

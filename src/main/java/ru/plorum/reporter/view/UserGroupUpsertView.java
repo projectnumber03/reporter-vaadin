@@ -12,7 +12,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.model.UserGroup;
 import ru.plorum.reporter.service.UserGroupService;
 
@@ -38,11 +38,11 @@ public class UserGroupUpsertView extends AbstractView implements HasUrlParameter
 
     private final UserGroupService userGroupService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     public UserGroupUpsertView(
             final UserGroupService userGroupService,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.userGroupService = userGroupService;
         this.licenseCache = licenseCache;
@@ -71,7 +71,7 @@ public class UserGroupUpsertView extends AbstractView implements HasUrlParameter
     }
 
     @Transactional
-    protected void saveUserGroup(final UserGroup group) {
+    public void saveUserGroup(final UserGroup group) {
         group.setName(nameField.getValue());
         group.setDescription(descriptionField.getValue());
         group.setParentUserGroup(parentGroupField.getValue());

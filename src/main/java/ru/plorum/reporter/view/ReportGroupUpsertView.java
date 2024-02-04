@@ -9,7 +9,7 @@ import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.util.CollectionUtils;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.component.ReportGroupTabContent;
 import ru.plorum.reporter.component.SecurityTabContent;
 import ru.plorum.reporter.model.ReportGroup;
@@ -34,7 +34,7 @@ public class ReportGroupUpsertView extends AbstractView implements HasUrlParamet
 
     private final ReportGroupService reportGroupService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final TabSheet tabSheet = new TabSheet();
 
@@ -46,7 +46,7 @@ public class ReportGroupUpsertView extends AbstractView implements HasUrlParamet
             final IUserService userService,
             final UserGroupService userGroupService,
             final ReportGroupService reportGroupService,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.userService = userService;
         this.userGroupService = userGroupService;

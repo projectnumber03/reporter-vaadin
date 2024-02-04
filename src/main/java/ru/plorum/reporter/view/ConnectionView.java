@@ -15,7 +15,7 @@ import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import ru.plorum.reporter.component.ConfirmationDialog;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.User;
@@ -36,11 +36,11 @@ public class ConnectionView extends AbstractView implements BeforeEnterObserver 
 
     private final ConnectionService connectionService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     public ConnectionView(
             final ConnectionService connectionService,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.connectionService = connectionService;
         this.licenseCache = licenseCache;

@@ -19,7 +19,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.ConfirmationDialog;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.Role;
@@ -42,13 +42,13 @@ public class UserView extends AbstractView implements BeforeEnterObserver {
 
     final IUserService userService;
 
-    final LicenseCache licenseCache;
+    final ILicenseCache licenseCache;
 
     final PaginatedGrid<User> userTable;
 
     public UserView(
             final IUserService userService,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.userService = userService;
         this.licenseCache = licenseCache;

@@ -16,7 +16,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.apache.logging.log4j.util.Strings;
 import ru.plorum.reporter.component.ConfirmationDialog;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.UserGroup;
@@ -35,13 +35,13 @@ public class UserGroupView extends AbstractView implements BeforeEnterObserver {
 
     private final UserGroupService userGroupService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final PaginatedGrid<UserGroup> userGroupTable;
 
     public UserGroupView(
             final UserGroupService userGroupService,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.userGroupService = userGroupService;
         this.licenseCache = licenseCache;

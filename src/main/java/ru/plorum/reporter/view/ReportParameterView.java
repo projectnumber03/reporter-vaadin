@@ -10,7 +10,7 @@ import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.util.CollectionUtils;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.model.Parameter;
 import ru.plorum.reporter.model.Report;
 import ru.plorum.reporter.service.ReportService;
@@ -28,7 +28,7 @@ public class ReportParameterView extends AbstractView implements HasUrlParameter
 
     private final ReportService reportService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final Button processButton = new Button("Продолжить");
 
@@ -44,7 +44,7 @@ public class ReportParameterView extends AbstractView implements HasUrlParameter
 
     public ReportParameterView(
             final ReportService reportService,
-            final LicenseCache licenseCache,
+            final ILicenseCache licenseCache,
             final DatePicker.DatePickerI18n i18n
     ) {
         this.reportService = reportService;

@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import ru.plorum.reporter.component.ErrorNotification;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.model.Role;
 import ru.plorum.reporter.model.User;
 import ru.plorum.reporter.model.UserGroup;
@@ -75,7 +75,7 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
 
     private final PasswordEncoder passwordEncoder;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     @Value("${amount.users}")
     private Integer userAmount;
@@ -127,7 +127,7 @@ public class UserUpsertView extends AbstractView implements HasUrlParameter<Stri
     }
 
     @Transactional
-    protected void saveUser(final User user) {
+    public void saveUser(final User user) {
         user.setActive(!blockField.getValue());
         user.setName(fioField.getValue());
         user.setGroup(groupField.getValue());

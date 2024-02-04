@@ -19,7 +19,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.jasypt.util.text.AES256TextEncryptor;
 import ru.plorum.reporter.VaadinApplication;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.model.Inn;
 import ru.plorum.reporter.repository.InnRepository;
 
@@ -39,7 +39,7 @@ public class SettingsView extends AbstractView implements BeforeEnterObserver {
 
     private final AES256TextEncryptor encryptor;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final TextField systemIdField = new TextField("Уникальный идентификатор системы");
 
@@ -55,7 +55,7 @@ public class SettingsView extends AbstractView implements BeforeEnterObserver {
             final String systemId,
             final InnRepository innRepository,
             final AES256TextEncryptor encryptor,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.systemId = systemId;
         this.innRepository = innRepository;

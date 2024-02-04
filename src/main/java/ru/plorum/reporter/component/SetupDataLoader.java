@@ -51,7 +51,7 @@ public class SetupDataLoader {
     private final TariffInfo tariffInfo;
 
     @Getter
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     @Value("${api.user.details}")
     private String apiUrl;

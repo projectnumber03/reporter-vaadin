@@ -7,7 +7,7 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 
 import static ru.plorum.reporter.util.Constants.MODULES;
 
@@ -17,7 +17,7 @@ import static ru.plorum.reporter.util.Constants.MODULES;
 @Route(value = "modules", layout = MainView.class)
 public class ModuleView extends AbstractView implements BeforeEnterObserver {
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     @Override
     @PostConstruct

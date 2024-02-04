@@ -43,7 +43,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
 
     private final ReportSchedulerService reportSchedulerService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final TabSheet tabSheet = new TabSheet();
 
@@ -65,7 +65,7 @@ public class ReportUpsertView extends AbstractView implements HasUrlParameter<St
             final ReportService reportService,
             final ReportGroupService reportGroupService,
             final ReportSchedulerService reportSchedulerService,
-            final LicenseCache licenseCache,
+            final ILicenseCache licenseCache,
             final DatePicker.DatePickerI18n i18n
     ) {
         this.userService = userService;

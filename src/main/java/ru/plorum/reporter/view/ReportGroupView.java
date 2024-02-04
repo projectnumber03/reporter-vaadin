@@ -10,7 +10,7 @@ import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.router.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.component.NewButton;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.ReportGroup;
@@ -28,13 +28,13 @@ public class ReportGroupView extends AbstractView implements BeforeEnterObserver
 
     private final ReportGroupService reportGroupService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final PaginatedGrid<ReportGroup> reportGroupTable;
 
     public ReportGroupView(
             final ReportGroupService reportGroupService,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.reportGroupService = reportGroupService;
         this.licenseCache = licenseCache;

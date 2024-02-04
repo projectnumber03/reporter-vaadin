@@ -1,5 +1,6 @@
 package ru.plorum.reporter.component;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.plorum.reporter.model.License;
@@ -11,7 +12,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class LicenseCache {
+@Profile({"business", "corporative", "professional"})
+public class LicenseCache implements ILicenseCache {
 
     private final Map<UUID, License> licenseMap = new HashMap<>();
 

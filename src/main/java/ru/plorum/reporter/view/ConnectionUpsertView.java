@@ -15,7 +15,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.ErrorNotification;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.model.connection.*;
 import ru.plorum.reporter.service.ConnectionService;
 import ru.plorum.reporter.service.IUserService;
@@ -41,7 +41,7 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
 
     private final IUserService userService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final ComboBox<String> typeField = new ComboBox<>("Тип БД", Arrays.asList("MSSQL", "ORACLE", "MYSQL", "POSTGRESQL", "H2"));
 
@@ -69,7 +69,7 @@ public class ConnectionUpsertView extends AbstractView implements HasUrlParamete
     public ConnectionUpsertView(
             final ConnectionService connectionService,
             final IUserService userService,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.connectionService = connectionService;
         this.userService = userService;

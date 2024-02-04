@@ -21,7 +21,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.util.CollectionUtils;
 import ru.plorum.reporter.component.ChartFlow;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.ReportOutputData;
 import ru.plorum.reporter.service.PdfService;
@@ -48,7 +48,7 @@ public class ReportOutputDataView extends AbstractView implements HasUrlParamete
 
     private final XlsxService xlsxService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final TabSheet tabSheet = new TabSheet();
 
@@ -68,7 +68,7 @@ public class ReportOutputDataView extends AbstractView implements HasUrlParamete
             final ReportOutputService reportOutputService,
             final PdfService pdfService,
             final XlsxService xlsxService,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.reportOutputService = reportOutputService;
         this.pdfService = pdfService;

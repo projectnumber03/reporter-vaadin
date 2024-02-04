@@ -11,7 +11,7 @@ import jakarta.annotation.security.RolesAllowed;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 import ru.plorum.reporter.component.ReportTableContextMenu;
 import ru.plorum.reporter.component.pagination.PaginatedGrid;
 import ru.plorum.reporter.model.Report;
@@ -40,7 +40,7 @@ public class ReportMyView extends AbstractView implements BeforeEnterObserver {
 
     private final ReportGroupService reportGroupService;
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     private final PaginatedGrid<Report> reportTable;
 
@@ -54,7 +54,7 @@ public class ReportMyView extends AbstractView implements BeforeEnterObserver {
             final ReportService reportService,
             final ReportOutputService reportOutputService,
             final ReportGroupService reportGroupService,
-            final LicenseCache licenseCache
+            final ILicenseCache licenseCache
     ) {
         this.reportService = reportService;
         this.reportOutputService = reportOutputService;

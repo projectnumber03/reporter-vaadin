@@ -9,17 +9,17 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.PermitAll;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
-import ru.plorum.reporter.component.LicenseCache;
+import ru.plorum.reporter.component.ILicenseCache;
 
 @PermitAll
 @PageTitle("О программе")
 @Route(value = "about", layout = MainView.class)
 public class AboutView extends AbstractView implements BeforeEnterObserver {
 
-    private final LicenseCache licenseCache;
+    private final ILicenseCache licenseCache;
 
     public AboutView(
-            final LicenseCache licenseCache,
+            final ILicenseCache licenseCache,
             @Value("${spring.profiles.active}") final String profile,
             @Value("${amount.users:2147483647}") final Integer users,
             @Value("${amount.roles:2147483647}") final Integer roles,

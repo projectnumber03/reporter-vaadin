@@ -17,10 +17,10 @@ import ru.plorum.reporter.repository.UserRepository;
 import java.util.*;
 
 @Service
-@Profile({"free"})
+@Profile({"free", "professional"})
 @Transactional
 @AllArgsConstructor
-public class UserServiceFree implements IUserService {
+public class UserServiceLight implements IUserService {
 
     private final UserRepository userRepository;
 

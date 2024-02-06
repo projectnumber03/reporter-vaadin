@@ -12,8 +12,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-@Profile({"free"})
-public class LicenseCacheFree implements ILicenseCache {
+@Profile({"free", "professional"})
+public class LicenseCacheLight implements ILicenseCache {
 
     @Value("${tariff.id}")
     private String tariffId;

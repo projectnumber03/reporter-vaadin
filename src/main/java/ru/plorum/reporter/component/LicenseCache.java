@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-@Profile({"business", "corporative", "professional"})
+@Profile({"business", "corporative"})
 public class LicenseCache implements ILicenseCache {
 
     private final Map<UUID, License> licenseMap = new HashMap<>();
